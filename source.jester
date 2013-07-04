@@ -1,0 +1,7 @@
+src/core.js
+src/events.js
+src/calc.js
+src/rectangle.js
+src/image.js
+src/animation.js
+src/sprite.js
