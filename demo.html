@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Action.JS Demo Viewer</title>
+		<link rel="stylesheet" type="text/css" href="style.css" />
+		<script type="text/javascript" src="build/action.js"></script>
+		<script type="text/javascript">
+		<!--
+		var _loader = setInterval(function(){
+			if(document.readyState === "complete"){
+				init();
+				clearInterval(_loader);
+			}
+		}, 10);
+		
+		function init(){
+			var demoScript = document.createElement("script");
+			demoScript.type = "text/javascript";
+			demoScript.src = prompt("Enter the .js file to run:");
+			document.head.appendChild(demoScript);
+			setTimeout(function(){
+				window.main();
+			}, 100);
+		}
+				
+		-->
+		</script>
+	</head>
+	<body>
+		<canvas id="stage" width=800 height=600>
+		</canvas>
+		<div id="log">
+		</div>
+	</body>
+</html>
