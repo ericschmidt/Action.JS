@@ -56,6 +56,15 @@
 			return _stage;
 		});
 		
+		// getters for width and height, they're read-only
+		this.__defineGetter__("stageWidth", function(){
+			return _width;
+		});
+		
+		this.__defineGetter__("stageHeight", function(){
+			return _height;
+		});
+		
 		// getter for the number of objects in the display list
 		this.__defineGetter__("numDisplayed", function(){
 			return _display.length;

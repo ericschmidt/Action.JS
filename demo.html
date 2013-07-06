@@ -16,7 +16,7 @@
 		function init(){
 			var demoScript = document.createElement("script");
 			demoScript.type = "text/javascript";
-			demoScript.src = prompt("Enter the .js file to run:");
+			demoScript.src = prompt("Enter the .js file to run:")+"?"+String(+new Date());
 			document.head.appendChild(demoScript);
 			setTimeout(function(){
 				window.main();

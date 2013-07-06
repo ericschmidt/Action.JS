@@ -30,6 +30,12 @@
 		this.__defineGetter__("stage", function(){
 			return _stage;
 		});
+		this.__defineGetter__("stageWidth", function(){
+			return _width;
+		});
+		this.__defineGetter__("stageHeight", function(){
+			return _height;
+		});
 		this.__defineGetter__("numDisplayed", function(){
 			return _display.length;
 		});
@@ -230,6 +236,26 @@
 			_currentState.scaleX = _this.scaleX;
 			_currentState.scaleY = _this.scaleY;
 			_currentState.draw(stage);
+		};
+	};
+})(window, action);
+(function(window, action){
+	action.Text = function(font, text, fillStyle){
+		var _this = this;
+		this.displayed = false;
+		this.x = 0;
+		this.y = 0;
+		this.font = font || "16pt Arial";
+		this.text = text || "";
+		this.fill = fillStyle || "#000000";
+		this.__defineGetter__("width", function(){
+			action.stage.font = _this.font;
+			return action.stage.measureText(_this.text).width;
+		});
+		this.draw = function(stage){
+			stage.fillStyle = _this.fill;
+			stage.font = _this.font;
+			stage.fillText(_this.text, _this.x, _this.y);
 		};
 	};
 })(window, action);

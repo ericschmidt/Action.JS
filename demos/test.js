@@ -23,6 +23,11 @@ function main(){
 	var s = new action.Animation("assets/test_sprite.png", 100, 100);
 	action.display(s);
 	
+	var t = new action.Text("16pt Arial", "HEY, THIS IS TEXT!");
+	t.x = 100;
+	t.y = 160;
+	action.display(t);
+	
 	action.fps = 24;
 	
 	action.events.click(r, function(){
@@ -53,5 +58,6 @@ function main(){
 	setTimeout(function(){
 		action.undisplay(r);
 		action.title("It's gone!");
+		t.text = "Still text.";
 	}, 4000);
 }

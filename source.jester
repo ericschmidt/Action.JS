@@ -5,3 +5,4 @@ src/rectangle.js
 src/image.js
 src/animation.js
 src/sprite.js
+src/text.js
