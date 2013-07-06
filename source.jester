@@ -1,8 +1,9 @@
 src/core.js
-src/events.js
 src/calc.js
+src/events.js
+src/keyboard.js
+src/text.js
 src/rectangle.js
 src/image.js
 src/animation.js
 src/sprite.js
-src/text.js

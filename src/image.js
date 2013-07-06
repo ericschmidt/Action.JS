@@ -15,7 +15,8 @@
 
 (function(window, action){
 
-	// Image 'class'
+	// Image class
+	// **TO DO: change addEventListener for cross-browser support?
 	action.Image = function(src){
 		var _this = this;
 		this.displayed = false;

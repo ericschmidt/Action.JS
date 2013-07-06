@@ -55,8 +55,8 @@
 		}, 10);
 		var _init = function(){
 			_pageLoadTime = +new Date() - _startLoadTime;
-			if(window.main) window.main();
-			else console.log("Action.JS Warning: no function main() found");
+			if(_this.main) _this.main();
+			else console.log("Action.JS Warning: no function action.main() found");
 		};
 		var _startLoop = function(){
 			_frameInterval = setInterval(function(){
@@ -104,6 +104,35 @@
 	};
 })(window);
 (function(window, action){
+	action.calc = {};
+	action.calc.DEG2RAD = Math.PI/180;
+	action.calc.RAD2DEG = 180/Math.PI;
+	action.calc.inRange = function(val, lo, hi){
+		return ((lo <= val) && (val <= hi));
+	};
+	action.calc.distance = function(p1x, p1y, p2x, p2y){
+		var dx = p2x - p1x;
+		var dy = p2y - p1y;
+		return Math.sqrt(dx*dx + dy*dy);
+	};
+	action.calc.collisionPt = function(px, py, obj){
+		return obj.displayed && (action.calc.inRange(px, obj.x, obj.x+obj.width*obj.scaleX) && action.calc.inRange(py, obj.y, obj.y+obj.height*obj.scaleY))
+	};
+	action.calc.collisionRect = function(obj1, obj2){
+		return obj1.displayed && obj2.displayed && ((action.calc.inRange(obj1.x, obj2.x, obj2.x+obj2.width*obj2.scaleX) || action.calc.inRange(obj1.x+obj1.width*obj1.scaleX, obj2.x, obj2.x+obj2.width*obj2.scaleX)) && (action.calc.inRange(obj1.y, obj2.y, obj2.y+obj2.height*obj2.scaleY) || action.calc.inRange(obj1.y+obj1.height*obj1.scaleY, obj2.y, obj2.y+obj2.height*obj2.scaleY)));
+	};
+	action.calc.collisionCirc = function(obj1, obj2){
+		var r1 = obj1.width>obj1.height ? obj1.width : obj1.height;
+		var r2 = obj2.width>obj2.height ? obj2.width : obj2.height;
+		var c1x = obj1.x + obj1.width/2;
+		var c1y = obj1.y + obj1.height/2;
+		var c2x = obj2.x + obj2.width/2;
+		var c2y = obj2.y + obj2.height/2;
+		var dist = action.calc.distance(c1x, c1y, c2x, c2y);
+		return obj1.displayed && obj2.displayed && dist <= r1+r2;
+	};
+})(window, action);
+(function(window, action){
 	action.events = {};
 	action.events.READY = "ready";
 	action.events.LOAD = "load";
@@ -130,17 +159,57 @@
 	};
 })(window, action);
 (function(window, action){
-	action.calc = {};
-	action.calc.DEG2RAD = Math.PI/180;
-	action.calc.RAD2DEG = 180/Math.PI;
-	action.calc.inRange = function(val, lo, hi){
-		return ((lo <= val) && (val <= hi));
-	};
-	action.calc.collisionPt = function(px, py, obj){
-		return obj.displayed && (action.calc.inRange(px, obj.x, obj.x+obj.width*obj.scaleX) && action.calc.inRange(py, obj.y, obj.y+obj.height*obj.scaleY))
-	};
-	action.calc.collisionRect = function(obj1, obj2){
-		return obj1.displayed && obj2.displayed && ((action.calc.inRange(obj1.x, obj2.x, obj2.x+obj2.width*obj2.scaleX) || action.calc.inRange(obj1.x+obj1.width*obj1.scaleX, obj2.x, obj2.x+obj2.width*obj2.scaleX)) && (action.calc.inRange(obj1.y, obj2.y, obj2.y+obj2.height*obj2.scaleY) || action.calc.inRange(obj1.y+obj1.height*obj1.scaleY, obj2.y, obj2.y+obj2.height*obj2.scaleY)));
+	action.keyboard = {};
+	action.keyboard.SPACEBAR = 32;
+	action.keyboard.LEFT = 37;
+	action.keyboard.UP = 38;
+	action.keyboard.RIGHT = 39;
+	action.keyboard.DOWN = 40;
+	action.keyboard.A = 65;
+	action.keyboard.B = 66;
+	action.keyboard.C = 67;
+	action.keyboard.D = 68;
+	action.keyboard.E = 69;
+	action.keyboard.F = 70;
+	action.keyboard.G = 71;
+	action.keyboard.H = 72;
+	action.keyboard.I = 73;
+	action.keyboard.J = 74;
+	action.keyboard.K = 75;
+	action.keyboard.L = 76;
+	action.keyboard.M = 77;
+	action.keyboard.N = 78;
+	action.keyboard.O = 79;
+	action.keyboard.P = 80;
+	action.keyboard.Q = 81;
+	action.keyboard.R = 82;
+	action.keyboard.S = 83;
+	action.keyboard.T = 84;
+	action.keyboard.U = 85;
+	action.keyboard.V = 86;
+	action.keyboard.W = 87;
+	action.keyboard.X = 88;
+	action.keyboard.Y = 89;
+	action.keyboard.Z = 90;
+})(window, action);
+(function(window, action){
+	action.Text = function(font, text, fillStyle){
+		var _this = this;
+		this.displayed = false;
+		this.x = 0;
+		this.y = 0;
+		this.font = font || "16pt Arial";
+		this.text = text || "";
+		this.fill = fillStyle || "#000000";
+		this.__defineGetter__("width", function(){
+			action.stage.font = _this.font;
+			return action.stage.measureText(_this.text).width;
+		});
+		this.draw = function(stage){
+			stage.fillStyle = _this.fill;
+			stage.font = _this.font;
+			stage.fillText(_this.text, _this.x, _this.y);
+		};
 	};
 })(window, action);
 (function(window, action){
@@ -236,26 +305,6 @@
 			_currentState.scaleX = _this.scaleX;
 			_currentState.scaleY = _this.scaleY;
 			_currentState.draw(stage);
-		};
-	};
-})(window, action);
-(function(window, action){
-	action.Text = function(font, text, fillStyle){
-		var _this = this;
-		this.displayed = false;
-		this.x = 0;
-		this.y = 0;
-		this.font = font || "16pt Arial";
-		this.text = text || "";
-		this.fill = fillStyle || "#000000";
-		this.__defineGetter__("width", function(){
-			action.stage.font = _this.font;
-			return action.stage.measureText(_this.text).width;
-		});
-		this.draw = function(stage){
-			stage.fillStyle = _this.fill;
-			stage.font = _this.font;
-			stage.fillText(_this.text, _this.x, _this.y);
 		};
 	};
 })(window, action);

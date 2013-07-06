@@ -6,7 +6,7 @@
  * www.eschmidt.co
  */
 
-function main(){
+action.main = function(){
 	
 	action.title("Action.JS Test");
 	action.setLog("log");
@@ -60,4 +60,4 @@ function main(){
 		action.title("It's gone!");
 		t.text = "Still text.";
 	}, 4000);
-}
+};

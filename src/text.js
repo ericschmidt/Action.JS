@@ -2,7 +2,7 @@
  * Action.JS
  * ActionScript-like library for JavaScript development
  *
- * Text module
+ * Text class
  *
  * Conventions:
  * lowercase package names, UpperCamelCase class names, ALLCAPS constants, _preUnderscored private members, lowerCamelCase public members
@@ -15,6 +15,8 @@
 
 (function(window, action){
 	
+	// Text class - only fill text for now
+	// **TO DO: add stroke text?
 	action.Text = function(font, text, fillStyle){
 		var _this = this;
 		this.displayed = false;

@@ -4,7 +4,9 @@
 
 More info to come soon.
 
-I use my own program to build this - I'll release it soon; for now the files can be concatenated manually or you can use build/action.js directly.
+To use, either concatenate all the source files or use the current build at build/action.js directly.
+
+Demos can be found in the demos folder, use demo.html to run them.
 
 Eric Schmidt 2013  
 www.eschmidt.co

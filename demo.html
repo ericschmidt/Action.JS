@@ -6,6 +6,7 @@
 		<script type="text/javascript" src="build/action.js"></script>
 		<script type="text/javascript">
 		<!--
+		
 		var _loader = setInterval(function(){
 			if(document.readyState === "complete"){
 				init();
@@ -19,10 +20,10 @@
 			demoScript.src = prompt("Enter the .js file to run:")+"?"+String(+new Date());
 			document.head.appendChild(demoScript);
 			setTimeout(function(){
-				window.main();
+				action.main();
 			}, 100);
 		}
-				
+		
 		-->
 		</script>
 	</head>

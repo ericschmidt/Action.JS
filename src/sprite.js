@@ -15,7 +15,7 @@
 
 (function(window, action){
 
-	// Sprite 'class' - a display object which can have multiple states, each of which are basic display objects (Rectangle, Image, Animation, etc)
+	// Sprite class - a display object which can have multiple states, each of which are basic display objects (Rectangle, Image, Animation, etc)
 	action.Sprite = function(){
 		var _this = this;
 		this.displayed = false;

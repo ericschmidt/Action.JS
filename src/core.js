@@ -15,6 +15,8 @@
 
 (function(window){
 	
+	// **TO DO: add functions to create stage canvas element & log div with JS
+	
 	window.action = new function(){
 		// private variables
 		var _this = this;
@@ -90,11 +92,11 @@
 			}
 		}, 10);
 		
-		// private init function, gets page load time and calls user-defined main function if it exists
+		// private init function, gets page load time and calls user-defined action.main function if it exists
 		var _init = function(){
 			_pageLoadTime = +new Date() - _startLoadTime;
-			if(window.main) window.main();
-			else console.log("Action.JS Warning: no function main() found");
+			if(_this.main) _this.main();
+			else console.log("Action.JS Warning: no function action.main() found");
 		};
 		// ------------
 		

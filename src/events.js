@@ -15,7 +15,6 @@
 
 (function(window, action){
 	
-	// ---- EVENT-RELATED THINGS ----------------
 	// **TO DO: add hover/mouseOver event handling function like 'click' ?
 	// event type constants
 	action.events = {};

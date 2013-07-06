@@ -15,7 +15,8 @@
 
 (function(window, action){
 
-	// Animation 'class' - stores a spritesheet internally and shifts it horizontally to animate
+	// Animation class - stores a spritesheet internally and shifts it horizontally to animate
+	// **TO DO: change addEventListener for cross-browser support?
 	action.Animation = function(spritesheet, spriteWidth, spriteHeight){
 		var _this = this;
 		this.displayed = false;

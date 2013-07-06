@@ -15,7 +15,7 @@
 
 (function(window, action){
 
-	// Rectangle 'class'
+	// Rectangle class
 	action.Rectangle = function(width, height, fillStyle){
 		var _this = this;
 		this.displayed = false;
