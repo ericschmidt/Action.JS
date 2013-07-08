@@ -1,16 +1,16 @@
 /*
-* PONG demo with Action.JS
-*
-* Eric Schmidt 2013
-* www.eschmidt.co
-*/
+ * PONG demo with Action.JS
+ *
+ * Eric Schmidt 2013
+ * www.eschmidt.co
+ */
 
-(function(window){
+(function(){
 	// keypress variables
 	var _w = false;
 	var _s = false;
 	
-	var speed = 5;												// movement speed for player & computer
+	var speed = 6;				// movement speed for player & computer
 	var CPULevel = Math.floor(100*(0.5+Math.random()*0.5))/100;	// computer level, from 0 (it won't move) to 1 (it won't lose)
 	var playerScore = 0;		// player's score
 	var compScore = 0;			// computer's score
@@ -23,8 +23,8 @@
 
 	action.main = function(){
 		// setup
-		action.setLog("log");
-		action.setStage("stage", "#000000");
+		action.createLog();
+		action.createStage(0, 0, 800, 600, "#000000");
 		action.title("Action.JS - PONG");
 		
 		// create game objects
@@ -62,7 +62,7 @@
 		action.log("PONG!");
 		action.log("Use W/S or arrow keys to move up/down");
 		action.log("Computer level: "+CPULevel);
-	}
+	};
 
 	function randomVelocity(s){
 		var vx = s*(2*Math.round(Math.random())-1);
@@ -90,16 +90,16 @@
 	}
 
 	function onKeyDown(ke){
-		if(ke.which == action.keyboard.W || ke.which == action.keyboard.UP) _w = true;
-		if(ke.which == action.keyboard.S || ke.which == action.keyboard.DOWN) _s = true;
+		if(ke.which === action.keyboard.W || ke.which === action.keyboard.UP) _w = true;
+		if(ke.which === action.keyboard.S || ke.which === action.keyboard.DOWN) _s = true;
 	}
 
 	function onKeyUp(ke){
-		if(ke.which == action.keyboard.W || ke.which == action.keyboard.UP) _w = false;
-		if(ke.which == action.keyboard.S || ke.which == action.keyboard.DOWN) _s = false;ssw
+		if(ke.which === action.keyboard.W || ke.which === action.keyboard.UP) _w = false;
+		if(ke.which === action.keyboard.S || ke.which === action.keyboard.DOWN) _s = false;
 	}
 	
-	function onEnterFrame(e){
+	function onEnterFrame(){
 		// move the ball
 		ball.x += ball.vel.x;
 		ball.y += ball.vel.y;
@@ -129,4 +129,4 @@
 		else if(ball.y > computer.y+computer.height/2 && computer.y+computer.height < action.stageHeight && Math.random() < CPULevel) computer.y += speed;
 	}
 
-})(window);
+})();

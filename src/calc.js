@@ -36,8 +36,16 @@
 	};
 	
 	// Collisions - only work on displayed objects
-	action.calc.collisionPt = function(px, py, obj){
-		return obj.displayed && (action.calc.inRange(px, obj.x, obj.x+obj.width*obj.scaleX) && action.calc.inRange(py, obj.y, obj.y+obj.height*obj.scaleY))
+	action.calc.ptCollisionRect = function(px, py, obj){
+		return obj.displayed && (action.calc.inRange(px, obj.x, obj.x+obj.width*obj.scaleX) && action.calc.inRange(py, obj.y, obj.y+obj.height*obj.scaleY));
+	};
+	
+	action.calc.ptCollisionCirc = function(px, py, obj){
+		var r = obj.width>obj.height ? obj.width : obj.height;
+		var cx = obj.x + obj.width/2;
+		var cy = obj.y + obj.height/2;
+		var dist = action.calc.distance(px, py, cx, cy);
+		return obj.displayed && dist <= r;
 	};
 	
 	action.calc.collisionRect = function(obj1, obj2){

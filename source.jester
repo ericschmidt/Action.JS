@@ -1,7 +1,8 @@
 src/core.js
 src/calc.js
+src/util.js
 src/events.js
-src/keyboard.js
+src/io.js
 src/text.js
 src/rectangle.js
 src/image.js

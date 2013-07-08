@@ -2,7 +2,7 @@
  * Action.JS
  * ActionScript-like library for JavaScript development
  *
- * Keyboard module
+ * Keyboard/mouse I/O modules
  *
  * Conventions:
  * lowercase package names, UpperCamelCase class names, ALLCAPS constants, _preUnderscored private members, lowerCamelCase public members
@@ -15,7 +15,20 @@
 
 (function(window, action){
 	
-	// hold key code constants here
+	// mouse object
+	action.mouse = {};
+	action.mouse.x = 0;
+	action.mouse.y = 0;
+	
+	// update mouse position when mouse moves
+	action.addEventListener(action.events.MOUSE_MOVE, function(e){
+		action.mouse.x = e.pageX - action.stageX;
+		action.mouse.y = e.pageY - action.stageY;
+	});
+	
+	// **TO DO: add functions hide() and show() for mouse
+	
+	// keyboard module to hold key code constants
 	action.keyboard = {};
 	action.keyboard.SPACEBAR = 32;
 	action.keyboard.LEFT = 37;

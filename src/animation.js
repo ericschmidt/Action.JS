@@ -29,7 +29,7 @@
 		var _numFrames = 0;
 		var _currentFrame = 0;
 		var _sheet = new Image();
-		_sheet.addEventListener("load", function(){
+		action.util.addEventHandler(_sheet, "load", function(){
 			_numFrames = Math.round(_sheet.width/_this.width);
 		});
 		_sheet.src = spritesheet;

@@ -17,15 +17,18 @@
 	
 	// **TO DO: add functions to create stage canvas element & log div with JS
 	
-	window.action = new function(){
+	window.action = new (function(){
 		// private variables
 		var _this = this;
 		var _startLoadTime = +new Date();	// set when the page is first open, used to calculate page load time
 		var _pageLoadTime = 0;				// the time it takes to load the page
 		var _log;							// the HTML element to which log text will be printed
+		var _canvas;						// the canvas element used for the stage
 		var _stage;							// the stage, which in JS is actually the drawing context
-		var _width;							// width of the stage
-		var _height;						// height of the stage
+		var _stageX;						// x position of the stage on the page
+		var _stageY;						// y position of the stage on the page
+		var _stageWidth;					// width of the stage
+		var _stageHeight;					// height of the stage
 		var _bgColor;						// the default background color of the stage as a CSS-style color
 		var _display = [];					// the display list
 		var _fps = 24;						// framerate, default is 24
@@ -36,35 +39,101 @@
 			return _pageLoadTime;
 		});
 		
+		// LOG/STAGE SETUP
+		
+		// create a div for the log from scratch; setLog needn't be called after this
+		this.createLog = function(size, horiz){
+			size = size || 300;
+			horiz = horiz || false;
+			_log = document.createElement("div");
+			_log.style.position = "absolute";
+			if(horiz){
+				// make horizontal log (goes on bottom of window)
+				_log.style.bottom = "0px";
+				_log.style.left = "0px";
+				_log.style.width = "100%";
+				_log.style.height = String(size)+"px";
+			} else {
+				// make vertical log (goes on right side of window)
+				_log.style.top = "0px";
+				_log.style.right = "0px";
+				_log.style.width = String(size)+"px";
+				_log.style.height = "100%";
+			}
+			// set bg color, font, overflow and initialize
+			_log.style.backgroundColor = "#CCCCCC";
+			_log.style.fontFamily = "Consolas, monaco, monospace";
+			_log.style.fontSize = "14px";
+			_log.style.overflowX = "auto";
+			_log.style.overflowY = "scroll";
+			_log.innerHTML = "Action.JS Output<br><br>";
+			document.body.appendChild(_log);
+		};
+		
+		// create a canvas element for the stage from scratch; setStage needn't be called after this
+		this.createStage = function(x, y, width, height, bgColor, border){
+			_stageX = x || 0;
+			_stageY = y || 0;
+			_stageWidth = width || 800;
+			_stageHeight = height || 600;
+			_bgColor = bgColor || "#FFFFFF";
+			_canvas = document.createElement("canvas");
+			_canvas.width = _stageWidth;
+			_canvas.height = _stageHeight;
+			_canvas.style.position = "absolute";
+			_canvas.style.top = String(_stageY)+"px";
+			_canvas.style.left = String(_stageX)+"px";
+			_canvas.style.border = border || "1px solid #000000";
+			_stage = _canvas.getContext("2d");
+			_this.clearStage();
+			document.body.appendChild(_canvas);
+		};
+		
 		// sets the log (for text output)
 		this.setLog = function(id){
 			_log = document.getElementById(id);
 			_log.style.fontFamily = "Consolas, monaco, monospace";
+			_log.style.fontSize = "14px";
 			_log.innerHTML = "Action.JS Output<br><br>";
 		};
 		
 		// sets the stage (for graphics) ** find way to make stage unselectable ?
 		this.setStage = function(id, bgColor){
-			var canvas = document.getElementById(id);
-			_width = canvas.width;
-			_height = canvas.height;
-			_stage = canvas.getContext("2d");
+			_canvas = document.getElementById(id);
+			_stageX = _this.util.elementPosition(_canvas).left;
+			_stageY = _this.util.elementPosition(_canvas).top;
+			_stageWidth = _canvas.width;
+			_stageHeight = _canvas.height;
+			_stage = _canvas.getContext("2d");
 			_bgColor = bgColor || "#FFFFFF";
 			_this.clearStage();
 		};
+		
+		// getter for the canvas element, though it shouldn't be used directly at all
+		this.__defineGetter__("canvas", function(){
+			return _canvas;
+		});
 		
 		// getter for the stage object, though it shouldn't be used directly too often
 		this.__defineGetter__("stage", function(){
 			return _stage;
 		});
 		
-		// getters for width and height, they're read-only
+		// getters for stageX, stageY, stageWidth, stageHeight; they're read-only
+		this.__defineGetter__("stageX", function(){
+			return _stageX;
+		});
+		
+		this.__defineGetter__("stageY", function(){
+			return _stageY;
+		});
+		
 		this.__defineGetter__("stageWidth", function(){
-			return _width;
+			return _stageWidth;
 		});
 		
 		this.__defineGetter__("stageHeight", function(){
-			return _height;
+			return _stageHeight;
 		});
 		
 		// getter for the number of objects in the display list
@@ -103,10 +172,10 @@
 		// private startLoop function, starts the main loop at the current FPS
 		var _startLoop = function(){
 			_frameInterval = setInterval(function(){
-				_this.dispatchEvent(new CustomEvent(_this.events.ENTER_FRAME));
+				_this.dispatchEvent(_this.events.ENTER_FRAME);
 				_this.clearStage();
 				_this.drawAll();
-			}, Math.floor(1000/_fps));
+			}, Math.ceil(1000/_fps));
 		};
 		
 		// private stopLoop function, stops the main loop from running by clearing the frame interval
@@ -134,7 +203,7 @@
 		
 		this.clearStage = function(){
 			_stage.fillStyle = _bgColor;
-			_stage.fillRect(0, 0, _width, _height);
+			_stage.fillRect(0, 0, _stageWidth, _stageHeight);
 		};
 		
 		this.drawAll = function(){
@@ -160,6 +229,6 @@
 				}
 			}
 		};
-	};
+	})();
 	
 })(window);

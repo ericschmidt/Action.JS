@@ -1,12 +1,15 @@
 (function(window){
-	window.action = new function(){
+	window.action = new (function(){
 		var _this = this;
 		var _startLoadTime = +new Date();	// set when the page is first open, used to calculate page load time
 		var _pageLoadTime = 0;				// the time it takes to load the page
 		var _log;							// the HTML element to which log text will be printed
+		var _canvas;						// the canvas element used for the stage
 		var _stage;							// the stage, which in JS is actually the drawing context
-		var _width;							// width of the stage
-		var _height;						// height of the stage
+		var _stageX;						// x position of the stage on the page
+		var _stageY;						// y position of the stage on the page
+		var _stageWidth;					// width of the stage
+		var _stageHeight;					// height of the stage
 		var _bgColor;						// the default background color of the stage as a CSS-style color
 		var _display = [];					// the display list
 		var _fps = 24;						// framerate, default is 24
@@ -14,27 +17,80 @@
 		this.__defineGetter__("pageLoadTime", function(){
 			return _pageLoadTime;
 		});
+		this.createLog = function(size, horiz){
+			size = size || 300;
+			horiz = horiz || false;
+			_log = document.createElement("div");
+			_log.style.position = "absolute";
+			if(horiz){
+				_log.style.bottom = "0px";
+				_log.style.left = "0px";
+				_log.style.width = "100%";
+				_log.style.height = String(size)+"px";
+			} else {
+				_log.style.top = "0px";
+				_log.style.right = "0px";
+				_log.style.width = String(size)+"px";
+				_log.style.height = "100%";
+			}
+			_log.style.backgroundColor = "#CCCCCC";
+			_log.style.fontFamily = "Consolas, monaco, monospace";
+			_log.style.fontSize = "14px";
+			_log.style.overflowX = "auto";
+			_log.style.overflowY = "scroll";
+			_log.innerHTML = "Action.JS Output<br><br>";
+			document.body.appendChild(_log);
+		};
+		this.createStage = function(x, y, width, height, bgColor, border){
+			_stageX = x || 0;
+			_stageY = y || 0;
+			_stageWidth = width || 800;
+			_stageHeight = height || 600;
+			_bgColor = bgColor || "#FFFFFF";
+			_canvas = document.createElement("canvas");
+			_canvas.width = _stageWidth;
+			_canvas.height = _stageHeight;
+			_canvas.style.position = "absolute";
+			_canvas.style.top = String(_stageY)+"px";
+			_canvas.style.left = String(_stageX)+"px";
+			_canvas.style.border = border || "1px solid #000000";
+			_stage = _canvas.getContext("2d");
+			_this.clearStage();
+			document.body.appendChild(_canvas);
+		};
 		this.setLog = function(id){
 			_log = document.getElementById(id);
 			_log.style.fontFamily = "Consolas, monaco, monospace";
+			_log.style.fontSize = "14px";
 			_log.innerHTML = "Action.JS Output<br><br>";
 		};
 		this.setStage = function(id, bgColor){
-			var canvas = document.getElementById(id);
-			_width = canvas.width;
-			_height = canvas.height;
-			_stage = canvas.getContext("2d");
+			_canvas = document.getElementById(id);
+			_stageX = _this.util.elementPosition(_canvas).left;
+			_stageY = _this.util.elementPosition(_canvas).top;
+			_stageWidth = _canvas.width;
+			_stageHeight = _canvas.height;
+			_stage = _canvas.getContext("2d");
 			_bgColor = bgColor || "#FFFFFF";
 			_this.clearStage();
 		};
+		this.__defineGetter__("canvas", function(){
+			return _canvas;
+		});
 		this.__defineGetter__("stage", function(){
 			return _stage;
 		});
+		this.__defineGetter__("stageX", function(){
+			return _stageX;
+		});
+		this.__defineGetter__("stageY", function(){
+			return _stageY;
+		});
 		this.__defineGetter__("stageWidth", function(){
-			return _width;
+			return _stageWidth;
 		});
 		this.__defineGetter__("stageHeight", function(){
-			return _height;
+			return _stageHeight;
 		});
 		this.__defineGetter__("numDisplayed", function(){
 			return _display.length;
@@ -60,10 +116,10 @@
 		};
 		var _startLoop = function(){
 			_frameInterval = setInterval(function(){
-				_this.dispatchEvent(new CustomEvent(_this.events.ENTER_FRAME));
+				_this.dispatchEvent(_this.events.ENTER_FRAME);
 				_this.clearStage();
 				_this.drawAll();
-			}, Math.floor(1000/_fps));
+			}, Math.ceil(1000/_fps));
 		};
 		var _stopLoop = function(){
 			clearInterval(_frameInterval);
@@ -80,7 +136,7 @@
 		};
 		this.clearStage = function(){
 			_stage.fillStyle = _bgColor;
-			_stage.fillRect(0, 0, _width, _height);
+			_stage.fillRect(0, 0, _stageWidth, _stageHeight);
 		};
 		this.drawAll = function(){
 			for(var i=0;i<_display.length;i++){
@@ -101,7 +157,7 @@
 				}
 			}
 		};
-	};
+	})();
 })(window);
 (function(window, action){
 	action.calc = {};
@@ -115,8 +171,15 @@
 		var dy = p2y - p1y;
 		return Math.sqrt(dx*dx + dy*dy);
 	};
-	action.calc.collisionPt = function(px, py, obj){
-		return obj.displayed && (action.calc.inRange(px, obj.x, obj.x+obj.width*obj.scaleX) && action.calc.inRange(py, obj.y, obj.y+obj.height*obj.scaleY))
+	action.calc.ptCollisionRect = function(px, py, obj){
+		return obj.displayed && (action.calc.inRange(px, obj.x, obj.x+obj.width*obj.scaleX) && action.calc.inRange(py, obj.y, obj.y+obj.height*obj.scaleY));
+	};
+	action.calc.ptCollisionCirc = function(px, py, obj){
+		var r = obj.width>obj.height ? obj.width : obj.height;
+		var cx = obj.x + obj.width/2;
+		var cy = obj.y + obj.height/2;
+		var dist = action.calc.distance(px, py, cx, cy);
+		return obj.displayed && dist <= r;
 	};
 	action.calc.collisionRect = function(obj1, obj2){
 		return obj1.displayed && obj2.displayed && ((action.calc.inRange(obj1.x, obj2.x, obj2.x+obj2.width*obj2.scaleX) || action.calc.inRange(obj1.x+obj1.width*obj1.scaleX, obj2.x, obj2.x+obj2.width*obj2.scaleX)) && (action.calc.inRange(obj1.y, obj2.y, obj2.y+obj2.height*obj2.scaleY) || action.calc.inRange(obj1.y+obj1.height*obj1.scaleY, obj2.y, obj2.y+obj2.height*obj2.scaleY)));
@@ -133,32 +196,63 @@
 	};
 })(window, action);
 (function(window, action){
+	action.util = {};
+	action.util.addEventHandler = function(elt, type, handler){
+		if(elt.addEventListener) elt.addEventListener(type, handler);
+		else if(elt.attachEvent) elt.attachEvent("on"+type, handler);
+	};
+	action.util.removeEventHandler = function(elt, type, handler){
+		if(elt.removeEventListener) elt.removeEventListener(type, handler);
+		else if(elt.detachEvent) elt.detachEvent("on"+type, handler);
+	};
+	action.util.elementPosition = function(elt){
+		var _left = 0;
+		var _top = 0;
+		if(elt.offsetParent){
+			var parent = elt;
+			do {
+				_left += parent.offsetLeft;
+				_top += parent.offsetTop;
+			} while(parent = parent.offsetParent);
+		}
+		return {left: _left, top: _top};
+	};
+})(window, action);
+(function(window, action){
 	action.events = {};
 	action.events.READY = "ready";
 	action.events.LOAD = "load";
 	action.events.ENTER_FRAME = "enterframe";
 	action.events.CLICK = "click";
 	action.events.MOUSE_MOVE = "mousemove";
+	action.events.MOUSE_DOWN = "mousedown";
+	action.events.MOUSE_UP = "mouseup";
 	action.events.KEY_DOWN = "keydown";
 	action.events.KEY_UP = "keyup";
 	action.events.click = function(obj, handler){
-		action.addEventListener(action.events.CLICK, function(e){
-			if(action.calc.collisionPt(e.pageX, e.pageY, obj)) handler();
+		action.addEventListener(action.events.CLICK, function(){
+			if(action.calc.ptCollisionRect(action.mouse.x, action.mouse.y, obj)) handler();
 		});
 	};
 	action.addEventListener = function(type, handler){
-		if(window.addEventListener) window.addEventListener(type, handler);
-		else if(window.attachEvent) window.attachEvent("on"+type, handler);
+		action.util.addEventHandler(window, type, handler);
 	};
 	action.removeEventListener = function(type, handler){
-		if(window.removeEventListener) window.removeEventListener(type, handler);
-		else if(window.detachEvent) window.detachEvent("on"+type, handler);
+		action.util.removeEventHandler(window, type, handler);
 	};
-	action.dispatchEvent = function(event){
-		window.dispatchEvent(event);
+	action.dispatchEvent = function(type, data){
+		data = data || {};
+		window.dispatchEvent(new CustomEvent(type, data));
 	};
 })(window, action);
 (function(window, action){
+	action.mouse = {};
+	action.mouse.x = 0;
+	action.mouse.y = 0;
+	action.addEventListener(action.events.MOUSE_MOVE, function(e){
+		action.mouse.x = e.pageX - action.stageX;
+		action.mouse.y = e.pageY - action.stageY;
+	});
 	action.keyboard = {};
 	action.keyboard.SPACEBAR = 32;
 	action.keyboard.LEFT = 37;
@@ -240,7 +334,7 @@
 		this.scaleX = 1;
 		this.scaleY = 1;
 		var _img = new Image();
-		_img.addEventListener("load", function(){
+		action.util.addEventHandler(_img, "load", function(){
 			_this.width = _img.width;
 			_this.height = _img.height;
 		});
@@ -263,7 +357,7 @@
 		var _numFrames = 0;
 		var _currentFrame = 0;
 		var _sheet = new Image();
-		_sheet.addEventListener("load", function(){
+		action.util.addEventHandler(_sheet, "load", function(){
 			_numFrames = Math.round(_sheet.width/_this.width);
 		});
 		_sheet.src = spritesheet;

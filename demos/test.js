@@ -9,13 +9,12 @@
 action.main = function(){
 	
 	action.title("Action.JS Test");
-	action.setLog("log");
+	action.createStage(0, 0, 800, 600, "#00CC00");
+	action.createLog(300, true);
 	action.log("Action.JS loaded in "+action.pageLoadTime+"ms");
 	action.log("Starting!");
 	
 	var _w = false, _a = false, _s = false, _d = false;
-	
-	action.setStage("stage", "#00CC00");
 	
 	var r = new action.Rectangle(100,100,"#007700");
 	action.display(r);
@@ -42,17 +41,17 @@ action.main = function(){
 	});
 	
 	action.addEventListener(action.events.KEY_DOWN, function(e){
-		if(e.which == 87) _w = true;
-		if(e.which == 65) _a = true;
-		if(e.which == 83) _s = true;
-		if(e.which == 68) _d = true;
+		if(e.which === action.keyboard.W) _w = true;
+		if(e.which === action.keyboard.A) _a = true;
+		if(e.which === action.keyboard.S) _s = true;
+		if(e.which === action.keyboard.D) _d = true;
 	});
 	
 	action.addEventListener(action.events.KEY_UP, function(e){
-		if(e.which == 87) _w = false;
-		if(e.which == 65) _a = false;
-		if(e.which == 83) _s = false;
-		if(e.which == 68) _d = false;
+		if(e.which === action.keyboard.W) _w = false;
+		if(e.which === action.keyboard.A) _a = false;
+		if(e.which === action.keyboard.S) _s = false;
+		if(e.which === action.keyboard.D) _d = false;
 	});
 	
 	setTimeout(function(){

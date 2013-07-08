@@ -27,7 +27,7 @@
 		this.scaleX = 1;
 		this.scaleY = 1;
 		var _img = new Image();
-		_img.addEventListener("load", function(){
+		action.util.addEventHandler(_img, "load", function(){
 			_this.width = _img.width;
 			_this.height = _img.height;
 		});
