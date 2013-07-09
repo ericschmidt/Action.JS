@@ -44,4 +44,16 @@
 		return {left: _left, top: _top};
 	};
 	
+	// user-agent stats so we know about the user's browser & capabilities
+	// first function thanks to kennebec on StackOverflow: http://stackoverflow.com/questions/2400935/browser-detection-in-javascript
+	action.util.browser = (function(){
+		var N = navigator.appName, ua = navigator.userAgent, tem;
+		var M = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
+		if(M && (tem = ua.match(/version\/([\.\d]+)/i))!= null) M[2] = tem[1];
+		M = M ? [M[1], M[2]] : [N, navigator.appVersion,'-?'];
+		return {name: M[0].toLowerCase(), version: M[1]};
+	})();
+	action.util.browser.hasJava = navigator.javaEnabled();
+	action.util.browser.agent = navigator.userAgent;
+	
 })(window, action);

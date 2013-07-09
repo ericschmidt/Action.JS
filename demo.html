@@ -14,13 +14,28 @@
 		}, 10);
 		
 		function init(){
-			var demoScript = document.createElement("script");
-			demoScript.type = "text/javascript";
-			demoScript.src = prompt("Enter the .js file to run:")+"?"+String(+new Date());
-			document.head.appendChild(demoScript);
-			setTimeout(function(){
-				action.main();
-			}, 100);
+			var _src = prompt("Enter the .js file to run:");
+			if(!_src){
+				// user didn't enter a file, display logo
+				var logo = document.createElement("img");
+				logo.src = "assets/ActionJS_logo.png";
+				logo.style.position = "absolute";
+				logo.style.top = "42%";
+				logo.style.left = "50%";
+				logo.style.marginTop = "-75px";
+				logo.style.marginLeft = "-200px";
+				document.body.appendChild(logo);
+			} else {
+				// load the file
+				_src += "?"+String(+new Date());
+				var demoScript = document.createElement("script");
+				demoScript.type = "text/javascript";
+				demoScript.src = _src;
+				document.head.appendChild(demoScript);
+				setTimeout(function(){
+					action.main();
+				}, 100);
+			}
 		}
 		
 		-->

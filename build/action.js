@@ -1,3 +1,8 @@
+// Action.JS
+// JavaScript library for interactive web applications
+// 
+// Eric Schmidt 2013
+// http://www.eschmidt.co/
 (function(window){
 	window.action = new (function(){
 		var _this = this;
@@ -217,6 +222,15 @@
 		}
 		return {left: _left, top: _top};
 	};
+	action.util.browser = (function(){
+		var N = navigator.appName, ua = navigator.userAgent, tem;
+		var M = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
+		if(M && (tem = ua.match(/version\/([\.\d]+)/i))!= null) M[2] = tem[1];
+		M = M ? [M[1], M[2]] : [N, navigator.appVersion,'-?'];
+		return {name: M[0].toLowerCase(), version: M[1]};
+	})();
+	action.util.browser.hasJava = navigator.javaEnabled();
+	action.util.browser.agent = navigator.userAgent;
 })(window, action);
 (function(window, action){
 	action.events = {};
@@ -227,6 +241,7 @@
 	action.events.MOUSE_MOVE = "mousemove";
 	action.events.MOUSE_DOWN = "mousedown";
 	action.events.MOUSE_UP = "mouseup";
+	action.events.MOUSE_WHEEL = "mouse_wheel"; // not just 'mousewheel' because it's already used by some browsers; this is an alias
 	action.events.KEY_DOWN = "keydown";
 	action.events.KEY_UP = "keyup";
 	action.events.click = function(obj, handler){
@@ -242,8 +257,12 @@
 	};
 	action.dispatchEvent = function(type, data){
 		data = data || {};
-		window.dispatchEvent(new CustomEvent(type, data));
+		window.dispatchEvent(new CustomEvent(type, {detail: data}));
 	};
+	action.addEventListener(action.util.browser.name === "firefox" ? "DOMMouseScroll" : "mousewheel", function(e){
+		var _delta = e.detail ? -1*e.detail : e.wheelDelta/120;
+		action.dispatchEvent(action.events.MOUSE_WHEEL, {delta: _delta});
+	});
 })(window, action);
 (function(window, action){
 	action.mouse = {};

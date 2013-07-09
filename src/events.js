@@ -25,6 +25,7 @@
 	action.events.MOUSE_MOVE = "mousemove";
 	action.events.MOUSE_DOWN = "mousedown";
 	action.events.MOUSE_UP = "mouseup";
+	action.events.MOUSE_WHEEL = "mouse_wheel"; // not just 'mousewheel' because it's already used by some browsers; this is an alias
 	action.events.KEY_DOWN = "keydown";
 	action.events.KEY_UP = "keyup";
 	
@@ -47,7 +48,13 @@
 	
 	action.dispatchEvent = function(type, data){
 		data = data || {};
-		window.dispatchEvent(new CustomEvent(type, data));
+		window.dispatchEvent(new CustomEvent(type, {detail: data}));
 	};
+	
+	// this handles dispatching the MOUSE_WHEEL event because it's not consistent across browsers
+	action.addEventListener(action.util.browser.name === "firefox" ? "DOMMouseScroll" : "mousewheel", function(e){
+		var _delta = e.detail ? -1*e.detail : e.wheelDelta/120;
+		action.dispatchEvent(action.events.MOUSE_WHEEL, {delta: _delta});
+	});
 	
 })(window, action);

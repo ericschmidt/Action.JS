@@ -12,6 +12,7 @@ action.main = function(){
 	action.createStage(0, 0, 800, 600, "#00CC00");
 	action.createLog(300, true);
 	action.log("Action.JS loaded in "+action.pageLoadTime+"ms");
+	action.log("You're using "+action.util.browser.name+", version "+action.util.browser.version);
 	action.log("Starting!");
 	
 	var _w = false, _a = false, _s = false, _d = false;
@@ -31,6 +32,11 @@ action.main = function(){
 	
 	action.events.click(r, function(){
 		action.log("clicked on r");
+	});
+	
+	action.addEventListener(action.events.MOUSE_WHEEL, function(e){
+		if(e.detail.delta > 0) action.log("Mouse scrolled up!");
+		else action.log("Mouse scrolled down!");
 	});
 	
 	action.addEventListener(action.events.ENTER_FRAME, function(){
