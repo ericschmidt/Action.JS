@@ -16,7 +16,6 @@
 (function(window, action){
 
 	// Image class
-	// **TO DO: change addEventListener for cross-browser support?
 	action.Image = function(src){
 		var _this = this;
 		this.displayed = false;
@@ -24,8 +23,10 @@
 		this.y = 0;
 		this.width = 0;
 		this.height = 0;
+		this.center = {x: 0, y: 0};
 		this.scaleX = 1;
 		this.scaleY = 1;
+		this.rotation = 0;
 		var _img = new Image();
 		action.util.addEventHandler(_img, "load", function(){
 			_this.width = _img.width;
@@ -34,7 +35,11 @@
 		_img.src = src;
 		
 		this.draw = function(stage){
-			stage.drawImage(_img, _this.x, _this.y, _this.width*_this.scaleX, _this.height*_this.scaleY);
+			stage.save();
+			stage.translate(_this.x, _this.y);
+			stage.rotate(_this.rotation*action.calc.DEG2RAD);
+			stage.drawImage(_img, -_this.center.x*_this.scaleX, -_this.center.y*_this.scaleY, _this.width*_this.scaleX, _this.height*_this.scaleY);
+			stage.restore();
 		};
 	};
 	

@@ -22,6 +22,8 @@
 		this.displayed = false;
 		this.x = 0;
 		this.y = 0;
+		this.center = {x: 0, y: 0};
+		this.rotation = 0;
 		this.font = font || "16pt Arial";
 		this.text = text || "";
 		this.fill = fillStyle || "#000000";
@@ -32,9 +34,13 @@
 		});
 		
 		this.draw = function(stage){
+			stage.save();
+			stage.translate(_this.x, _this.y);
+			stage.rotate(_this.rotation*action.calc.DEG2RAD);
 			stage.fillStyle = _this.fill;
 			stage.font = _this.font;
-			stage.fillText(_this.text, _this.x, _this.y);
+			stage.fillText(_this.text, -_this.center.x, -_this.center.y);
+			stage.restore();
 		};
 	};
 	

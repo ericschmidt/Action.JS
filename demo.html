@@ -16,15 +16,17 @@
 		function init(){
 			var _src = prompt("Enter the .js file to run:");
 			if(!_src){
-				// user didn't enter a file, display logo
+				// user didn't enter a file, display logo!
 				var logo = document.createElement("img");
 				logo.src = "assets/ActionJS_logo.png";
 				logo.style.position = "absolute";
 				logo.style.top = "42%";
 				logo.style.left = "50%";
-				logo.style.marginTop = "-75px";
+				logo.style.marginTop = "-72px";
 				logo.style.marginLeft = "-200px";
+				logo.style.boxShadow = "3px 3px 3px #000000";
 				document.body.appendChild(logo);
+				document.body.style.backgroundColor = "#CCCCCC";
 			} else {
 				// load the file
 				_src += "?"+String(+new Date());

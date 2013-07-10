@@ -35,9 +35,57 @@
 		return Math.sqrt(dx*dx + dy*dy);
 	};
 	
-	// Collisions - only work on displayed objects
+	// rotate (px, py) about (cx, cy) by theta radians
+	action.calc.rotate = function(px, py, cx, cy, theta){
+		var _diff = {x: px-cx, y: py-cy};
+		var _x = _diff.x*Math.cos(theta) - _diff.y*Math.sin(theta) + cx;
+		var _y = _diff.x*Math.sin(theta) + _diff.y*Math.cos(theta) + cy;
+		return {x: _x, y: _y};
+	}
+	
+	// COLLISIONS - only work on displayed objects
+	
+	// bounding box calculator
+	action.calc.boundingBox = function(obj){
+		if(obj.rotation % 360 === 0){
+			// return obvious box
+			return {x: obj.x-obj.center.x*obj.scaleX, y: obj.y-obj.center.y*obj.scaleY, width: obj.width*obj.scaleX, height: obj.height*obj.scaleY};
+		} else {
+			var _corners = [{x: 0, y: 0},{x: obj.width*obj.scaleX, y: 0},{x: obj.width*obj.scaleX, y: obj.height*obj.scaleY},{x: 0, y: obj.height*obj.scaleY}];
+			var _rotated = [];
+			var _current;
+			for(var i=0;i<4;i++){
+				_current = _corners[i];
+				_rotated.push(action.calc.rotate(_current.x, _current.y, obj.center.x, obj.center.y, obj.rotation*action.calc.DEG2RAD));
+			}
+			var _minX = _rotated[0].x;
+			var _minY = _rotated[0].y;
+			var _maxX = _rotated[2].x;
+			var _maxY = _rotated[2].y;
+			for(i=0;i<4;i++){
+				_current = _rotated[i];
+				if(_current.x < _minX) _minX = _current.x;
+				if(_current.x > _maxX) _maxX = _current.x;
+				if(_current.y < _minY) _minY = _current.y;
+				if(_current.y > _maxY) _maxY = _current.y;
+			}
+			var _offsetX = obj.x-obj.center.x*obj.scaleX;
+			var _offsetY = obj.y-obj.center.y*obj.scaleY;
+			_minX += _offsetX;
+			_maxX += _offsetX;
+			_minY += _offsetY;
+			_maxY += _offsetY;
+			return {x: _minX, y: _minY, width: _maxX-_minX, height: _maxY-_minY};
+		}
+	};
+	
 	action.calc.ptCollisionRect = function(px, py, obj){
-		return obj.displayed && (action.calc.inRange(px, obj.x, obj.x+obj.width*obj.scaleX) && action.calc.inRange(py, obj.y, obj.y+obj.height*obj.scaleY));
+		if(!obj.displayed){
+			return false;
+		} else {
+			var _bounds = action.calc.boundingBox(obj);
+			return action.calc.inRange(px, _bounds.x, _bounds.x+_bounds.width) && action.calc.inRange(py, _bounds.y, _bounds.y+_bounds.height);
+		}
 	};
 	
 	action.calc.ptCollisionCirc = function(px, py, obj){
@@ -49,7 +97,13 @@
 	};
 	
 	action.calc.collisionRect = function(obj1, obj2){
-		return obj1.displayed && obj2.displayed && ((action.calc.inRange(obj1.x, obj2.x, obj2.x+obj2.width*obj2.scaleX) || action.calc.inRange(obj1.x+obj1.width*obj1.scaleX, obj2.x, obj2.x+obj2.width*obj2.scaleX)) && (action.calc.inRange(obj1.y, obj2.y, obj2.y+obj2.height*obj2.scaleY) || action.calc.inRange(obj1.y+obj1.height*obj1.scaleY, obj2.y, obj2.y+obj2.height*obj2.scaleY)));
+		if(!obj1.displayed || !obj2.displayed){
+			return false;
+		} else {
+			var _bounds1 = action.calc.boundingBox(obj1);
+			var _bounds2 = action.calc.boundingBox(obj2);
+			return (action.calc.inRange(_bounds1.x, _bounds2.x, _bounds2.x+_bounds2.width) || action.calc.inRange(_bounds1.x+_bounds1.width, _bounds2.x, _bounds2.x+_bounds2.width)) && (action.calc.inRange(_bounds1.y, _bounds2.y, _bounds2.y+_bounds2.height) || action.calc.inRange(_bounds1.y+_bounds1.height, _bounds2.y, _bounds2.y+_bounds2.height));
+		}
 	};
 	
 	action.calc.collisionCirc = function(obj1, obj2){

@@ -28,8 +28,9 @@
 	
 	// **TO DO: add functions hide() and show() for mouse
 	
-	// keyboard module to hold key code constants
+	// keyboard object to hold key code constants
 	action.keyboard = {};
+	action.keyboard.ENTER = 13;
 	action.keyboard.SPACEBAR = 32;
 	action.keyboard.LEFT = 37;
 	action.keyboard.UP = 38;

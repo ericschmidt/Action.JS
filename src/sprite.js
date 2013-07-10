@@ -23,8 +23,10 @@
 		this.y = 0;
 		this.width = 0;
 		this.height = 0;
+		this.center = {x: 0, y: 0};
 		this.scaleX = 1;
 		this.scaleY = 1;
+		this.rotation = 0;
 		var _states = {};
 		var _currentState;
 		this.addState = function(name, obj){
@@ -42,8 +44,10 @@
 		this.draw = function(stage){
 			_currentState.x = _this.x;
 			_currentState.y = _this.y;
+			_currentState.center = _this.center;
 			_currentState.scaleX = _this.scaleX;
 			_currentState.scaleY = _this.scaleY;
+			_currentState.rotation = _this.rotation;
 			_currentState.draw(stage);
 		};
 	};

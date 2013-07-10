@@ -6,19 +6,19 @@
 (function(window){
 	window.action = new (function(){
 		var _this = this;
-		var _startLoadTime = +new Date();	// set when the page is first open, used to calculate page load time
-		var _pageLoadTime = 0;				// the time it takes to load the page
-		var _log;							// the HTML element to which log text will be printed
-		var _canvas;						// the canvas element used for the stage
-		var _stage;							// the stage, which in JS is actually the drawing context
-		var _stageX;						// x position of the stage on the page
-		var _stageY;						// y position of the stage on the page
-		var _stageWidth;					// width of the stage
-		var _stageHeight;					// height of the stage
-		var _bgColor;						// the default background color of the stage as a CSS-style color
-		var _display = [];					// the display list
-		var _fps = 24;						// framerate, default is 24
-		var _frameInterval;					// frame interval for when the application is playing
+		var _startLoadTime = +new Date();
+		var _pageLoadTime = 0;
+		var _log;
+		var _canvas;
+		var _stage;
+		var _stageX;
+		var _stageY;
+		var _stageWidth;
+		var _stageHeight;
+		var _bgColor;
+		var _display = [];
+		var _fps = 24;
+		var _frameInterval;
 		this.__defineGetter__("pageLoadTime", function(){
 			return _pageLoadTime;
 		});
@@ -176,8 +176,50 @@
 		var dy = p2y - p1y;
 		return Math.sqrt(dx*dx + dy*dy);
 	};
+	action.calc.rotate = function(px, py, cx, cy, theta){
+		var _diff = {x: px-cx, y: py-cy};
+		var _x = _diff.x*Math.cos(theta) - _diff.y*Math.sin(theta) + cx;
+		var _y = _diff.x*Math.sin(theta) + _diff.y*Math.cos(theta) + cy;
+		return {x: _x, y: _y};
+	}
+	action.calc.boundingBox = function(obj){
+		if(obj.rotation % 360 === 0){
+			return {x: obj.x-obj.center.x*obj.scaleX, y: obj.y-obj.center.y*obj.scaleY, width: obj.width*obj.scaleX, height: obj.height*obj.scaleY};
+		} else {
+			var _corners = [{x: 0, y: 0},{x: obj.width*obj.scaleX, y: 0},{x: obj.width*obj.scaleX, y: obj.height*obj.scaleY},{x: 0, y: obj.height*obj.scaleY}];
+			var _rotated = [];
+			var _current;
+			for(var i=0;i<4;i++){
+				_current = _corners[i];
+				_rotated.push(action.calc.rotate(_current.x, _current.y, obj.center.x, obj.center.y, obj.rotation*action.calc.DEG2RAD));
+			}
+			var _minX = _rotated[0].x;
+			var _minY = _rotated[0].y;
+			var _maxX = _rotated[2].x;
+			var _maxY = _rotated[2].y;
+			for(i=0;i<4;i++){
+				_current = _rotated[i];
+				if(_current.x < _minX) _minX = _current.x;
+				if(_current.x > _maxX) _maxX = _current.x;
+				if(_current.y < _minY) _minY = _current.y;
+				if(_current.y > _maxY) _maxY = _current.y;
+			}
+			var _offsetX = obj.x-obj.center.x*obj.scaleX;
+			var _offsetY = obj.y-obj.center.y*obj.scaleY;
+			_minX += _offsetX;
+			_maxX += _offsetX;
+			_minY += _offsetY;
+			_maxY += _offsetY;
+			return {x: _minX, y: _minY, width: _maxX-_minX, height: _maxY-_minY};
+		}
+	};
 	action.calc.ptCollisionRect = function(px, py, obj){
-		return obj.displayed && (action.calc.inRange(px, obj.x, obj.x+obj.width*obj.scaleX) && action.calc.inRange(py, obj.y, obj.y+obj.height*obj.scaleY));
+		if(!obj.displayed){
+			return false;
+		} else {
+			var _bounds = action.calc.boundingBox(obj);
+			return action.calc.inRange(px, _bounds.x, _bounds.x+_bounds.width) && action.calc.inRange(py, _bounds.y, _bounds.y+_bounds.height);
+		}
 	};
 	action.calc.ptCollisionCirc = function(px, py, obj){
 		var r = obj.width>obj.height ? obj.width : obj.height;
@@ -187,7 +229,13 @@
 		return obj.displayed && dist <= r;
 	};
 	action.calc.collisionRect = function(obj1, obj2){
-		return obj1.displayed && obj2.displayed && ((action.calc.inRange(obj1.x, obj2.x, obj2.x+obj2.width*obj2.scaleX) || action.calc.inRange(obj1.x+obj1.width*obj1.scaleX, obj2.x, obj2.x+obj2.width*obj2.scaleX)) && (action.calc.inRange(obj1.y, obj2.y, obj2.y+obj2.height*obj2.scaleY) || action.calc.inRange(obj1.y+obj1.height*obj1.scaleY, obj2.y, obj2.y+obj2.height*obj2.scaleY)));
+		if(!obj1.displayed || !obj2.displayed){
+			return false;
+		} else {
+			var _bounds1 = action.calc.boundingBox(obj1);
+			var _bounds2 = action.calc.boundingBox(obj2);
+			return (action.calc.inRange(_bounds1.x, _bounds2.x, _bounds2.x+_bounds2.width) || action.calc.inRange(_bounds1.x+_bounds1.width, _bounds2.x, _bounds2.x+_bounds2.width)) && (action.calc.inRange(_bounds1.y, _bounds2.y, _bounds2.y+_bounds2.height) || action.calc.inRange(_bounds1.y+_bounds1.height, _bounds2.y, _bounds2.y+_bounds2.height));
+		}
 	};
 	action.calc.collisionCirc = function(obj1, obj2){
 		var r1 = obj1.width>obj1.height ? obj1.width : obj1.height;
@@ -273,6 +321,7 @@
 		action.mouse.y = e.pageY - action.stageY;
 	});
 	action.keyboard = {};
+	action.keyboard.ENTER = 13;
 	action.keyboard.SPACEBAR = 32;
 	action.keyboard.LEFT = 37;
 	action.keyboard.UP = 38;
@@ -311,6 +360,8 @@
 		this.displayed = false;
 		this.x = 0;
 		this.y = 0;
+		this.center = {x: 0, y: 0};
+		this.rotation = 0;
 		this.font = font || "16pt Arial";
 		this.text = text || "";
 		this.fill = fillStyle || "#000000";
@@ -319,9 +370,13 @@
 			return action.stage.measureText(_this.text).width;
 		});
 		this.draw = function(stage){
+			stage.save();
+			stage.translate(_this.x, _this.y);
+			stage.rotate(_this.rotation*action.calc.DEG2RAD);
 			stage.fillStyle = _this.fill;
 			stage.font = _this.font;
-			stage.fillText(_this.text, _this.x, _this.y);
+			stage.fillText(_this.text, -_this.center.x, -_this.center.y);
+			stage.restore();
 		};
 	};
 })(window, action);
@@ -333,12 +388,18 @@
 		this.y = 0;
 		this.width = width;
 		this.height = height;
+		this.center = {x: 0, y: 0};
 		this.scaleX = 1;
 		this.scaleY = 1;
+		this.rotation = 0;
 		this.fill = fillStyle || "#000000";
 		this.draw = function(stage){
+			stage.save();
 			stage.fillStyle = _this.fill;
-			stage.fillRect(_this.x, _this.y, _this.width*_this.scaleX, _this.height*_this.scaleY);
+			stage.translate(_this.x, _this.y);
+			stage.rotate(_this.rotation*action.calc.DEG2RAD);
+			stage.fillRect(-_this.center.x*_this.scaleX, -_this.center.y*_this.scaleY, _this.width*_this.scaleX, _this.height*_this.scaleY);
+			stage.restore();
 		};
 	};
 })(window, action);
@@ -350,8 +411,10 @@
 		this.y = 0;
 		this.width = 0;
 		this.height = 0;
+		this.center = {x: 0, y: 0};
 		this.scaleX = 1;
 		this.scaleY = 1;
+		this.rotation = 0;
 		var _img = new Image();
 		action.util.addEventHandler(_img, "load", function(){
 			_this.width = _img.width;
@@ -359,7 +422,11 @@
 		});
 		_img.src = src;
 		this.draw = function(stage){
-			stage.drawImage(_img, _this.x, _this.y, _this.width*_this.scaleX, _this.height*_this.scaleY);
+			stage.save();
+			stage.translate(_this.x, _this.y);
+			stage.rotate(_this.rotation*action.calc.DEG2RAD);
+			stage.drawImage(_img, -_this.center.x*_this.scaleX, -_this.center.y*_this.scaleY, _this.width*_this.scaleX, _this.height*_this.scaleY);
+			stage.restore();
 		};
 	};
 })(window, action);
@@ -371,8 +438,10 @@
 		this.y = 0;
 		this.width = spriteWidth;
 		this.height = spriteHeight;
+		this.center = {x: 0, y: 0};
 		this.scaleX = 1;
 		this.scaleY = 1;
+		this.rotation = 0;
 		var _numFrames = 0;
 		var _currentFrame = 0;
 		var _sheet = new Image();
@@ -385,7 +454,11 @@
 			_currentFrame %= _numFrames;
 		});
 		this.draw = function(stage){
-			stage.drawImage(_sheet, _currentFrame*_this.width, 0, _this.width, _this.height, _this.x, _this.y, _this.width*_this.scaleX, _this.height*_this.scaleY);
+			stage.save();
+			stage.translate(_this.x, _this.y);
+			stage.rotate(_this.rotation*action.calc.DEG2RAD);
+			stage.drawImage(_sheet, _currentFrame*_this.width, 0, _this.width, _this.height, -_this.center.x*_this.scaleX, -_this.center.y*_this.scaleY, _this.width*_this.scaleX, _this.height*_this.scaleY);
+			stage.restore();
 		};
 	};
 })(window, action);
@@ -397,8 +470,10 @@
 		this.y = 0;
 		this.width = 0;
 		this.height = 0;
+		this.center = {x: 0, y: 0};
 		this.scaleX = 1;
 		this.scaleY = 1;
+		this.rotation = 0;
 		var _states = {};
 		var _currentState;
 		this.addState = function(name, obj){
@@ -415,8 +490,10 @@
 		this.draw = function(stage){
 			_currentState.x = _this.x;
 			_currentState.y = _this.y;
+			_currentState.center = _this.center;
 			_currentState.scaleX = _this.scaleX;
 			_currentState.scaleY = _this.scaleY;
+			_currentState.rotation = _this.rotation;
 			_currentState.draw(stage);
 		};
 	};

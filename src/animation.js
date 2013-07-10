@@ -16,7 +16,6 @@
 (function(window, action){
 
 	// Animation class - stores a spritesheet internally and shifts it horizontally to animate
-	// **TO DO: change addEventListener for cross-browser support?
 	action.Animation = function(spritesheet, spriteWidth, spriteHeight){
 		var _this = this;
 		this.displayed = false;
@@ -24,8 +23,10 @@
 		this.y = 0;
 		this.width = spriteWidth;
 		this.height = spriteHeight;
+		this.center = {x: 0, y: 0};
 		this.scaleX = 1;
 		this.scaleY = 1;
+		this.rotation = 0;
 		var _numFrames = 0;
 		var _currentFrame = 0;
 		var _sheet = new Image();
@@ -40,7 +41,11 @@
 		});
 		
 		this.draw = function(stage){
-			stage.drawImage(_sheet, _currentFrame*_this.width, 0, _this.width, _this.height, _this.x, _this.y, _this.width*_this.scaleX, _this.height*_this.scaleY);
+			stage.save();
+			stage.translate(_this.x, _this.y);
+			stage.rotate(_this.rotation*action.calc.DEG2RAD);
+			stage.drawImage(_sheet, _currentFrame*_this.width, 0, _this.width, _this.height, -_this.center.x*_this.scaleX, -_this.center.y*_this.scaleY, _this.width*_this.scaleX, _this.height*_this.scaleY);
+			stage.restore();
 		};
 	};
 	
