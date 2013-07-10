@@ -1,6 +1,7 @@
 # Action.JS
 
-*JavaScript library for developing interactive web applications, inspired by ActionScript 3*
+*JavaScript library for developing interactive web applications, inspired by ActionScript 3*  
+Released under the MIT license.
 
 ### Get the Code
 
@@ -18,7 +19,7 @@ A full reference is coming soon enough...
 
 **A Note on Sound**
 
-I'm not sure I'm going to implement sound into Action.JS; ideally I would to keep everything together in one library, but I've been using [Buzz](http://buzz.jaysalvat.com/) lately and it's simple and effective, so for now I recommend using a third-party sound library. But I very well may include sound in Action.JS in the future.
+I'm not sure I'm going to implement sound into Action.JS; ideally I would, to keep everything together in one library, but I've been using [Buzz](http://buzz.jaysalvat.com/) lately and it's simple and effective, so for now I recommend using a third-party sound library. But I very well may include sound in Action.JS in the future.
 
 ----
 Eric Schmidt 2013  
