@@ -41,7 +41,7 @@
 		var _x = _diff.x*Math.cos(theta) - _diff.y*Math.sin(theta) + cx;
 		var _y = _diff.x*Math.sin(theta) + _diff.y*Math.cos(theta) + cy;
 		return {x: _x, y: _y};
-	}
+	};
 	
 	// COLLISIONS - only work on displayed objects
 	

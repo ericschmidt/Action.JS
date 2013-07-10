@@ -181,7 +181,7 @@
 		var _x = _diff.x*Math.cos(theta) - _diff.y*Math.sin(theta) + cx;
 		var _y = _diff.x*Math.sin(theta) + _diff.y*Math.cos(theta) + cy;
 		return {x: _x, y: _y};
-	}
+	};
 	action.calc.boundingBox = function(obj){
 		if(obj.rotation % 360 === 0){
 			return {x: obj.x-obj.center.x*obj.scaleX, y: obj.y-obj.center.y*obj.scaleY, width: obj.width*obj.scaleX, height: obj.height*obj.scaleY};
