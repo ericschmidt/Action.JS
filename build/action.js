@@ -1,10 +1,10 @@
 // Action.JS
 // JavaScript library for interactive web applications
 // Licensed under the MIT license.
-// ----
+// --------
 // Copyright (c) 2013 Eric Schmidt
 // http://www.eschmidt.co/
-// ----
+// --------
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -25,7 +25,7 @@
 (function(window){
 	window.action = new (function(){
 		var _this = this;
-		var _startLoadTime = +new Date();
+		var _startLoadTime = Date.now();
 		var _pageLoadTime = 0;
 		var _log;
 		var _canvas;
@@ -134,7 +134,7 @@
 			}
 		}, 10);
 		var _init = function(){
-			_pageLoadTime = +new Date() - _startLoadTime;
+			_pageLoadTime = Date.now() - _startLoadTime;
 			if(_this.main) _this.main();
 			else console.log("Action.JS Warning: no function action.main() found");
 		};
@@ -196,9 +196,11 @@
 		return Math.sqrt(dx*dx + dy*dy);
 	};
 	action.calc.rotate = function(px, py, cx, cy, theta){
+		var _sin = Math.sin(theta);
+		var _cos = Math.cos(theta);
 		var _diff = {x: px-cx, y: py-cy};
-		var _x = _diff.x*Math.cos(theta) - _diff.y*Math.sin(theta) + cx;
-		var _y = _diff.x*Math.sin(theta) + _diff.y*Math.cos(theta) + cy;
+		var _x = _diff.x*_cos - _diff.y*_sin + cx;
+		var _y = _diff.x*_sin + _diff.y*_cos + cy;
 		return {x: _x, y: _y};
 	};
 	action.calc.boundingBox = function(obj){
@@ -241,11 +243,16 @@
 		}
 	};
 	action.calc.ptCollisionCirc = function(px, py, obj){
-		var r = obj.width>obj.height ? obj.width : obj.height;
-		var cx = obj.x + obj.width/2;
-		var cy = obj.y + obj.height/2;
-		var dist = action.calc.distance(px, py, cx, cy);
-		return obj.displayed && dist <= r;
+		if(!obj.displayed){
+			return false;
+		} else {
+			var _bounds = action.calc.boundingBox(obj);
+			var r = _bounds.width>_bounds.height ? _bounds.width : _bounds.height;
+			var cx = _bounds.x + _bounds.width/2;
+			var cy = _bounds.y + _bounds.height/2;
+			var dist = action.calc.distance(px, py, cx, cy);
+			return dist <= r;
+		}
 	};
 	action.calc.collisionRect = function(obj1, obj2){
 		if(!obj1.displayed || !obj2.displayed){
@@ -257,14 +264,20 @@
 		}
 	};
 	action.calc.collisionCirc = function(obj1, obj2){
-		var r1 = obj1.width>obj1.height ? obj1.width : obj1.height;
-		var r2 = obj2.width>obj2.height ? obj2.width : obj2.height;
-		var c1x = obj1.x + obj1.width/2;
-		var c1y = obj1.y + obj1.height/2;
-		var c2x = obj2.x + obj2.width/2;
-		var c2y = obj2.y + obj2.height/2;
-		var dist = action.calc.distance(c1x, c1y, c2x, c2y);
-		return obj1.displayed && obj2.displayed && dist <= r1+r2;
+		if(!obj1.displayed || !obj2.displayed){
+			return false;
+		} else {
+			var _bounds1 = action.calc.boundingBox(obj1);
+			var _bounds2 = action.calc.boundingBox(obj2);
+			var r1 = _bounds1.width>_bounds1.height ? _bounds1.width : _bounds1.height;
+			var r2 = _bounds2.width>_bounds2.height ? _bounds2.width : _bounds2.height;
+			var c1x = _bounds1.x + _bounds1.width/2;
+			var c1y = _bounds1.y + _bounds1.height/2;
+			var c2x = _bounds2.x + _bounds2.width/2;
+			var c2y = _bounds2.y + _bounds2.height/2;
+			var dist = action.calc.distance(c1x, c1y, c2x, c2y);
+			return dist <= r1+r2;
+		}
 	};
 })(window, action);
 (function(window, action){

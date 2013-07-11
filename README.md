@@ -1,11 +1,12 @@
 # Action.JS
 
-*JavaScript library for developing interactive web applications, inspired by ActionScript 3*  
-Released under the MIT license.
+*JavaScript library for developing interactive web applications, inspired by ActionScript 3*
+
+Action.JS is released under the MIT license.
 
 ### Get the Code
 
-For now, either clone the repository or [download it as a zip](https://github.com/ericschmidt/Action.JS/archive/master.zip).  
+For now, either clone the repository or [download it as a zip](https://github.com/ericschmidt/Action.JS/zipball/master).  
 You can use the current build (not minified) at build/action.js directly, or if you make edits, you'll have to concatenate the source files.  
 Once it's in a suitable condition I'll put the build on my website so it can be hotlinked to or downloaded alone.
 

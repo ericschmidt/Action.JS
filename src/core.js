@@ -20,7 +20,7 @@
 	window.action = new (function(){
 		// private variables
 		var _this = this;
-		var _startLoadTime = +new Date();	// set when the page is first open, used to calculate page load time
+		var _startLoadTime = Date.now();	// set when the page is first open, used to calculate page load time
 		var _pageLoadTime = 0;				// the time it takes to load the page
 		var _log;							// the HTML element to which log text will be printed
 		var _canvas;						// the canvas element used for the stage
@@ -163,7 +163,7 @@
 		
 		// private init function, gets page load time and calls user-defined action.main function if it exists
 		var _init = function(){
-			_pageLoadTime = +new Date() - _startLoadTime;
+			_pageLoadTime = Date.now() - _startLoadTime;
 			if(_this.main) _this.main();
 			else console.log("Action.JS Warning: no function action.main() found");
 		};
