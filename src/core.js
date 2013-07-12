@@ -15,8 +15,6 @@
 
 (function(window){
 	
-	// **TO DO: add functions to create stage canvas element & log div with JS
-	
 	window.action = new (function(){
 		// private variables
 		var _this = this;

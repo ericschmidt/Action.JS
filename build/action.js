@@ -25,19 +25,19 @@
 (function(window){
 	window.action = new (function(){
 		var _this = this;
-		var _startLoadTime = Date.now();
-		var _pageLoadTime = 0;
-		var _log;
-		var _canvas;
-		var _stage;
-		var _stageX;
-		var _stageY;
-		var _stageWidth;
-		var _stageHeight;
-		var _bgColor;
-		var _display = [];
-		var _fps = 24;
-		var _frameInterval;
+		var _startLoadTime = Date.now();	
+		var _pageLoadTime = 0;				
+		var _log;							
+		var _canvas;						
+		var _stage;							
+		var _stageX;						
+		var _stageY;						
+		var _stageWidth;					
+		var _stageHeight;					
+		var _bgColor;						
+		var _display = [];					
+		var _fps = 24;						
+		var _frameInterval;					
 		this.__defineGetter__("pageLoadTime", function(){
 			return _pageLoadTime;
 		});
@@ -321,7 +321,7 @@
 	action.events.MOUSE_MOVE = "mousemove";
 	action.events.MOUSE_DOWN = "mousedown";
 	action.events.MOUSE_UP = "mouseup";
-	action.events.MOUSE_WHEEL = "mouse_wheel"; // not just 'mousewheel' because it's already used by some browsers; this is an alias
+	action.events.MOUSE_WHEEL = "mouse_wheel"; 
 	action.events.KEY_DOWN = "keydown";
 	action.events.KEY_UP = "keyup";
 	action.events.click = function(obj, handler){
