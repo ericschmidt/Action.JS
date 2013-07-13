@@ -15,7 +15,6 @@
 
 (function(window, action){
 	
-	// **TO DO: add hover/mouseOver event handling function like 'click' ?
 	// event type constants
 	action.events = {};
 	action.events.READY = "ready";
@@ -29,10 +28,17 @@
 	action.events.KEY_DOWN = "keydown";
 	action.events.KEY_UP = "keyup";
 	
-	// a 'click' event handling function for display objects
+	// a 'click' event handling function for display objects - handler can take the target object as a parameter
 	action.events.click = function(obj, handler){
 		action.addEventListener(action.events.CLICK, function(){
-			if(action.calc.ptCollisionRect(action.mouse.x, action.mouse.y, obj)) handler();
+			if(action.calc.ptCollisionRect(action.mouse.x, action.mouse.y, obj)) handler(obj);
+		});
+	};
+	
+	// a 'hover' event handling function for display objects, similar to click; fires event as long as mouse moves on object
+	action.events.hover = function(obj, handler){
+		action.addEventListener(action.events.MOUSE_MOVE, function(){
+			if(action.calc.ptCollisionRect(action.mouse.x, action.mouse.y, obj)) handler(obj);
 		});
 	};
 	

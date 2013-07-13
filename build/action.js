@@ -25,19 +25,19 @@
 (function(window){
 	window.action = new (function(){
 		var _this = this;
-		var _startLoadTime = Date.now();	
-		var _pageLoadTime = 0;				
-		var _log;							
-		var _canvas;						
-		var _stage;							
-		var _stageX;						
-		var _stageY;						
-		var _stageWidth;					
-		var _stageHeight;					
-		var _bgColor;						
-		var _display = [];					
-		var _fps = 24;						
-		var _frameInterval;					
+		var _startLoadTime = Date.now();
+		var _pageLoadTime = 0;
+		var _log;
+		var _canvas;
+		var _stage;
+		var _stageX;
+		var _stageY;
+		var _stageWidth;
+		var _stageHeight;
+		var _bgColor;
+		var _display = [];
+		var _fps = 24;
+		var _frameInterval;
 		this.__defineGetter__("pageLoadTime", function(){
 			return _pageLoadTime;
 		});
@@ -183,6 +183,7 @@
 		};
 	})();
 })(window);
+
 (function(window, action){
 	action.calc = {};
 	action.calc.DEG2RAD = Math.PI/180;
@@ -280,6 +281,7 @@
 		}
 	};
 })(window, action);
+
 (function(window, action){
 	action.util = {};
 	action.util.addEventHandler = function(elt, type, handler){
@@ -312,6 +314,7 @@
 	action.util.browser.hasJava = navigator.javaEnabled();
 	action.util.browser.agent = navigator.userAgent;
 })(window, action);
+
 (function(window, action){
 	action.events = {};
 	action.events.READY = "ready";
@@ -321,12 +324,17 @@
 	action.events.MOUSE_MOVE = "mousemove";
 	action.events.MOUSE_DOWN = "mousedown";
 	action.events.MOUSE_UP = "mouseup";
-	action.events.MOUSE_WHEEL = "mouse_wheel"; 
+	action.events.MOUSE_WHEEL = "mouse_wheel";
 	action.events.KEY_DOWN = "keydown";
 	action.events.KEY_UP = "keyup";
 	action.events.click = function(obj, handler){
 		action.addEventListener(action.events.CLICK, function(){
-			if(action.calc.ptCollisionRect(action.mouse.x, action.mouse.y, obj)) handler();
+			if(action.calc.ptCollisionRect(action.mouse.x, action.mouse.y, obj)) handler(obj);
+		});
+	};
+	action.events.hover = function(obj, handler){
+		action.addEventListener(action.events.MOUSE_MOVE, function(){
+			if(action.calc.ptCollisionRect(action.mouse.x, action.mouse.y, obj)) handler(obj);
 		});
 	};
 	action.addEventListener = function(type, handler){
@@ -344,6 +352,7 @@
 		action.dispatchEvent(action.events.MOUSE_WHEEL, {delta: _delta});
 	});
 })(window, action);
+
 (function(window, action){
 	action.mouse = {};
 	action.mouse.x = 0;
@@ -386,6 +395,7 @@
 	action.keyboard.Y = 89;
 	action.keyboard.Z = 90;
 })(window, action);
+
 (function(window, action){
 	action.Text = function(font, text, fillStyle){
 		var _this = this;
@@ -412,6 +422,7 @@
 		};
 	};
 })(window, action);
+
 (function(window, action){
 	action.Rectangle = function(width, height, fillStyle){
 		var _this = this;
@@ -435,6 +446,7 @@
 		};
 	};
 })(window, action);
+
 (function(window, action){
 	action.Image = function(src){
 		var _this = this;
@@ -462,6 +474,7 @@
 		};
 	};
 })(window, action);
+
 (function(window, action){
 	action.Animation = function(spritesheet, spriteWidth, spriteHeight){
 		var _this = this;
@@ -494,6 +507,7 @@
 		};
 	};
 })(window, action);
+
 (function(window, action){
 	action.Sprite = function(){
 		var _this = this;
@@ -530,3 +544,4 @@
 		};
 	};
 })(window, action);
+
