@@ -15,6 +15,8 @@
 
 (function(window, action){
 
+	// **TO DO: add stop() and play() methods?
+
 	// Animation class - stores a spritesheet internally and shifts it horizontally to animate
 	action.Animation = function(spritesheet, spriteWidth, spriteHeight){
 		var _this = this;

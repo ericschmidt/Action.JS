@@ -53,6 +53,14 @@
 		M = M ? [M[1], M[2]] : [N, navigator.appVersion,'-?'];
 		return {name: M[0].toLowerCase(), version: M[1]};
 	})();
+	action.util.browser.os = (function(){
+		var plat = navigator.platform.toLowerCase();
+		if(plat.indexOf("win") != -1) return "windows";
+		else if(plat.indexOf("mac") != -1) return "mac";
+		else if(plat.indexOf("iphone") != -1 || plat.indexOf("ipod") != -1 || plat.indexOf("ipad") != -1) return "iOS";
+		else if(plat.indexOf("linux") != -1) return "linux";
+		else return "unknown";
+	})();
 	action.util.browser.hasJava = navigator.javaEnabled();
 	action.util.browser.agent = navigator.userAgent;
 	
