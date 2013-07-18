@@ -28,6 +28,17 @@
 		else if(elt.detachEvent) elt.detachEvent("on"+type, handler);
 	};
 	
+	// function for extending classes
+	action.util.extend = function(baseClass, childConstructor){
+		childConstructor = childConstructor || function(){};
+		function Child(){
+			baseClass.apply(this);
+			childConstructor.apply(this, arguments);
+		}
+		Child.prototype = baseClass.prototype;
+		return Child;
+	};
+	
 	// function to get the position of a DOM element on the page
 	action.util.elementPosition = function(elt){
 		var _left = 0;

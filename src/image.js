@@ -27,12 +27,20 @@
 		this.scaleX = 1;
 		this.scaleY = 1;
 		this.rotation = 0;
+		var _src = src;
+		this.__defineGetter__("src", function(){
+			return _src;
+		});
+		this.__defineSetter__("src", function(src){
+			_src = src;
+			_img.src = _src;
+		});
 		var _img = new Image();
 		action.util.addEventHandler(_img, "load", function(){
 			_this.width = _img.width;
 			_this.height = _img.height;
 		});
-		_img.src = src;
+		_img.src = _src;
 		
 		this.draw = function(stage){
 			stage.save();

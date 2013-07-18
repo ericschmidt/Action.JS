@@ -292,6 +292,15 @@
 		if(elt.removeEventListener) elt.removeEventListener(type, handler);
 		else if(elt.detachEvent) elt.detachEvent("on"+type, handler);
 	};
+	action.util.extend = function(baseClass, childConstructor){
+		childConstructor = childConstructor || function(){};
+		function Child(){
+			baseClass.apply(this);
+			childConstructor.apply(this, arguments);
+		}
+		Child.prototype = baseClass.prototype;
+		return Child;
+	};
 	action.util.elementPosition = function(elt){
 		var _left = 0;
 		var _top = 0;
@@ -467,12 +476,20 @@
 		this.scaleX = 1;
 		this.scaleY = 1;
 		this.rotation = 0;
+		var _src = src;
+		this.__defineGetter__("src", function(){
+			return _src;
+		});
+		this.__defineSetter__("src", function(src){
+			_src = src;
+			_img.src = _src;
+		});
 		var _img = new Image();
 		action.util.addEventHandler(_img, "load", function(){
 			_this.width = _img.width;
 			_this.height = _img.height;
 		});
-		_img.src = src;
+		_img.src = _src;
 		this.draw = function(stage){
 			stage.save();
 			stage.translate(_this.x, _this.y);
@@ -497,11 +514,19 @@
 		this.rotation = 0;
 		var _numFrames = 0;
 		var _currentFrame = 0;
+		var _src = spritesheet;
+		this.__defineGetter__("src", function(){
+			return _src;
+		});
+		this.__defineSetter__("src", function(src){
+			_src = src;
+			_sheet.src = _src;
+		});
 		var _sheet = new Image();
 		action.util.addEventHandler(_sheet, "load", function(){
 			_numFrames = Math.round(_sheet.width/_this.width);
 		});
-		_sheet.src = spritesheet;
+		_sheet.src = _src;
 		action.addEventListener(action.events.ENTER_FRAME, function(){
 			_currentFrame++;
 			_currentFrame %= _numFrames;
