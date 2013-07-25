@@ -35,7 +35,7 @@
 		this.removeState = function(name){
 			delete _states[name];
 		};
-		this.show = function(name){
+		this.showState = function(name){
 			_currentState = _states[name];
 			_this.width = _currentState.width;
 			_this.height = _currentState.height;

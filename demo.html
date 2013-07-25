@@ -29,7 +29,7 @@
 				document.body.style.backgroundColor = "#CCCCCC";
 			} else {
 				// load the file
-				_src += "?"+String(+new Date());
+				_src += "?"+String(Date.now());
 				var demoScript = document.createElement("script");
 				demoScript.type = "text/javascript";
 				demoScript.src = _src;

@@ -39,6 +39,15 @@
 		return Child;
 	};
 	
+	// function to remove a specified element from an array
+	action.util.arrayRemove = function(arr, obj){
+		for(var i=0;i<arr.length;i++){
+			if(arr[i] === obj){
+				arr.splice(i, 1);
+			}
+		}
+	};
+	
 	// function to get the position of a DOM element on the page
 	action.util.elementPosition = function(elt){
 		var _left = 0;

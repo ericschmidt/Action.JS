@@ -42,6 +42,11 @@
 		});
 		_img.src = _src;
 		
+		// load event handler so you can do stuff when the image is loaded
+		this.load = function(handler){
+			action.util.addEventHandler(_img, "load", handler);
+		};
+		
 		this.draw = function(stage){
 			stage.save();
 			stage.translate(_this.x, _this.y);

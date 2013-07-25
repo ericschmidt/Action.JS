@@ -111,7 +111,7 @@
 		} else {
 			var _bounds1 = action.calc.boundingBox(obj1);
 			var _bounds2 = action.calc.boundingBox(obj2);
-			return (action.calc.inRange(_bounds1.x, _bounds2.x, _bounds2.x+_bounds2.width) || action.calc.inRange(_bounds1.x+_bounds1.width, _bounds2.x, _bounds2.x+_bounds2.width)) && (action.calc.inRange(_bounds1.y, _bounds2.y, _bounds2.y+_bounds2.height) || action.calc.inRange(_bounds1.y+_bounds1.height, _bounds2.y, _bounds2.y+_bounds2.height));
+			return (action.calc.inRange(_bounds1.x, _bounds2.x, _bounds2.x+_bounds2.width) || action.calc.inRange(_bounds2.x, _bounds1.x, _bounds1.x+_bounds1.width)) && (action.calc.inRange(_bounds1.y, _bounds2.y, _bounds2.y+_bounds2.height) || action.calc.inRange(_bounds2.y, _bounds1.y, _bounds1.y+_bounds1.height));
 		}
 	};
 	

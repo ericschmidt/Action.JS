@@ -261,7 +261,7 @@
 		} else {
 			var _bounds1 = action.calc.boundingBox(obj1);
 			var _bounds2 = action.calc.boundingBox(obj2);
-			return (action.calc.inRange(_bounds1.x, _bounds2.x, _bounds2.x+_bounds2.width) || action.calc.inRange(_bounds1.x+_bounds1.width, _bounds2.x, _bounds2.x+_bounds2.width)) && (action.calc.inRange(_bounds1.y, _bounds2.y, _bounds2.y+_bounds2.height) || action.calc.inRange(_bounds1.y+_bounds1.height, _bounds2.y, _bounds2.y+_bounds2.height));
+			return (action.calc.inRange(_bounds1.x, _bounds2.x, _bounds2.x+_bounds2.width) || action.calc.inRange(_bounds2.x, _bounds1.x, _bounds1.x+_bounds1.width)) && (action.calc.inRange(_bounds1.y, _bounds2.y, _bounds2.y+_bounds2.height) || action.calc.inRange(_bounds2.y, _bounds1.y, _bounds1.y+_bounds1.height));
 		}
 	};
 	action.calc.collisionCirc = function(obj1, obj2){
@@ -300,6 +300,13 @@
 		}
 		Child.prototype = baseClass.prototype;
 		return Child;
+	};
+	action.util.arrayRemove = function(arr, obj){
+		for(var i=0;i<arr.length;i++){
+			if(arr[i] === obj){
+				arr.splice(i, 1);
+			}
+		}
 	};
 	action.util.elementPosition = function(elt){
 		var _left = 0;
@@ -490,6 +497,9 @@
 			_this.height = _img.height;
 		});
 		_img.src = _src;
+		this.load = function(handler){
+			action.util.addEventHandler(_img, "load", handler);
+		};
 		this.draw = function(stage){
 			stage.save();
 			stage.translate(_this.x, _this.y);
@@ -561,7 +571,7 @@
 		this.removeState = function(name){
 			delete _states[name];
 		};
-		this.show = function(name){
+		this.showState = function(name){
 			_currentState = _states[name];
 			_this.width = _currentState.width;
 			_this.height = _currentState.height;
