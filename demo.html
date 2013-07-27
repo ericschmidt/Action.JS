@@ -15,7 +15,7 @@
 		
 		function init(){
 			var _src = prompt("Enter the .js file to run:");
-			if(!_src){
+			if(!_src || _src.indexOf(".js") === -1){
 				// user didn't enter a file, display logo!
 				var logo = document.createElement("img");
 				logo.src = "assets/ActionJS_logo.png";
@@ -29,14 +29,9 @@
 				document.body.style.backgroundColor = "#CCCCCC";
 			} else {
 				// load the file
-				_src += "?"+String(Date.now());
-				var demoScript = document.createElement("script");
-				demoScript.type = "text/javascript";
-				demoScript.src = _src;
-				document.head.appendChild(demoScript);
-				setTimeout(function(){
+				action.util.include(_src, function(){
 					action.main();
-				}, 100);
+				}, true);
 			}
 		}
 		

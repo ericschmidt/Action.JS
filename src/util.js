@@ -13,7 +13,7 @@
  * eschmidt@mit.edu | eschmidt.co
  */
 
-(function(window, action){
+(function(window, document, action){
 	
 	action.util = {};
 	
@@ -26,6 +26,31 @@
 	action.util.removeEventHandler = function(elt, type, handler){
 		if(elt.removeEventListener) elt.removeEventListener(type, handler);
 		else if(elt.detachEvent) elt.detachEvent("on"+type, handler);
+	};
+	
+	// include function to import other JS files - 'last' parameter specifies whether to add this file last or first relative to other scripts on the page
+	action.util.include = function(src, callback, last){
+		last = last || false;
+		callback = callback || function(){};
+		var scripts = document.getElementsByTagName("script");
+		var loaded;
+		var script = document.createElement("script");
+		script.type = "text/javascript";
+		script.src = src+"?"+Date.now();
+		// load handler
+		function ready(){
+			if(!loaded && (!script.readyState || script.readyState === "complete")){
+				loaded = true;
+				callback();
+				action.util.removeEventHandler(script, "load", ready);
+				action.util.removeEventHandler(script, "readystatechange", ready);
+			}
+		}
+		action.util.addEventHandler(script, "load", ready);
+		action.util.addEventHandler(script, "readystatechange", ready);
+		// add new script to document
+		if(last) scripts[scripts.length-1].parentNode.appendChild(script);
+		else scripts[0].parentNode.insertBefore(script, scripts[0]);
 	};
 	
 	// function for extending classes
@@ -84,4 +109,4 @@
 	action.util.browser.hasJava = navigator.javaEnabled();
 	action.util.browser.agent = navigator.userAgent;
 	
-})(window, action);
+})(window, document, action);

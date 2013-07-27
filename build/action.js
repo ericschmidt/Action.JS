@@ -282,7 +282,7 @@
 	};
 })(window, action);
 
-(function(window, action){
+(function(window, document, action){
 	action.util = {};
 	action.util.addEventHandler = function(elt, type, handler){
 		if(elt.addEventListener) elt.addEventListener(type, handler);
@@ -291,6 +291,27 @@
 	action.util.removeEventHandler = function(elt, type, handler){
 		if(elt.removeEventListener) elt.removeEventListener(type, handler);
 		else if(elt.detachEvent) elt.detachEvent("on"+type, handler);
+	};
+	action.util.include = function(src, callback, last){
+		last = last || false;
+		callback = callback || function(){};
+		var scripts = document.getElementsByTagName("script");
+		var loaded;
+		var script = document.createElement("script");
+		script.type = "text/javascript";
+		script.src = src+"?"+Date.now();
+		function ready(){
+			if(!loaded && (!script.readyState || script.readyState === "complete")){
+				loaded = true;
+				callback();
+				action.util.removeEventHandler(script, "load", ready);
+				action.util.removeEventHandler(script, "readystatechange", ready);
+			}
+		}
+		action.util.addEventHandler(script, "load", ready);
+		action.util.addEventHandler(script, "readystatechange", ready);
+		if(last) scripts[scripts.length-1].parentNode.appendChild(script);
+		else scripts[0].parentNode.insertBefore(script, scripts[0]);
 	};
 	action.util.extend = function(baseClass, childConstructor){
 		childConstructor = childConstructor || function(){};
@@ -337,7 +358,7 @@
 	})();
 	action.util.browser.hasJava = navigator.javaEnabled();
 	action.util.browser.agent = navigator.userAgent;
-})(window, action);
+})(window, document, action);
 
 (function(window, action){
 	action.events = {};
@@ -496,7 +517,7 @@
 			_this.width = _img.width;
 			_this.height = _img.height;
 		});
-		_img.src = _src;
+		if(_src) _img.src = _src;
 		this.load = function(handler){
 			action.util.addEventHandler(_img, "load", handler);
 		};
@@ -536,7 +557,7 @@
 		action.util.addEventHandler(_sheet, "load", function(){
 			_numFrames = Math.round(_sheet.width/_this.width);
 		});
-		_sheet.src = _src;
+		if(_src) _sheet.src = _src;
 		action.addEventListener(action.events.ENTER_FRAME, function(){
 			_currentFrame++;
 			_currentFrame %= _numFrames;

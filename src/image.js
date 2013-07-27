@@ -40,7 +40,7 @@
 			_this.width = _img.width;
 			_this.height = _img.height;
 		});
-		_img.src = _src;
+		if(_src) _img.src = _src;
 		
 		// load event handler so you can do stuff when the image is loaded
 		this.load = function(handler){

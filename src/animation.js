@@ -43,7 +43,7 @@
 		action.util.addEventHandler(_sheet, "load", function(){
 			_numFrames = Math.round(_sheet.width/_this.width);
 		});
-		_sheet.src = _src;
+		if(_src) _sheet.src = _src;
 		
 		action.addEventListener(action.events.ENTER_FRAME, function(){
 			_currentFrame++;
