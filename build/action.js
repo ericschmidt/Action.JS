@@ -544,6 +544,9 @@
 		this.scaleY = 1;
 		this.rotation = 0;
 		var _numFrames = 0;
+		this.__defineGetter__("numFrames", function(){
+			return _numFrames;
+		});
 		var _currentFrame = 0;
 		var _src = spritesheet;
 		this.__defineGetter__("src", function(){
@@ -556,12 +559,35 @@
 		var _sheet = new Image();
 		action.util.addEventHandler(_sheet, "load", function(){
 			_numFrames = Math.round(_sheet.width/_this.width);
+			_this.play(true);
 		});
 		if(_src) _sheet.src = _src;
-		action.addEventListener(action.events.ENTER_FRAME, function(){
-			_currentFrame++;
-			_currentFrame %= _numFrames;
+		this.load = function(handler){
+			action.util.addEventHandler(_sheet, "load", handler);
+		};
+		var _playing = false;
+		this.__defineGetter__("playing", function(){
+			return _playing;
 		});
+		var _loop;
+		var _onEnterFrame = function(){
+			_currentFrame++;
+			if(!_loop && _currentFrame >= _numFrames){
+				_this.stop();
+			} else {
+				_currentFrame %= _numFrames;
+			}
+		};
+		this.play = function(loop){
+			_loop = loop || false;
+			action.addEventListener(action.events.ENTER_FRAME, _onEnterFrame);
+			_playing = true;
+		};
+		this.stop = function(){
+			action.removeEventListener(action.events.ENTER_FRAME, _onEnterFrame);
+			_currentFrame = 0;
+			_playing = false;
+		};
 		this.draw = function(stage){
 			stage.save();
 			stage.translate(_this.x, _this.y);

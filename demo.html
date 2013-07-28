@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>Action.JS Demo Viewer</title>
-		<script type="text/javascript" src="build/action.min.js"></script>
+		<script type="text/javascript" src="build/action.js"></script>
 		<script type="text/javascript">
 		<!--
 		
@@ -16,7 +16,7 @@
 		function init(){
 			var _src = prompt("Enter the .js file to run:");
 			if(!_src || _src.indexOf(".js") === -1){
-				// user didn't enter a file, display logo!
+				// user didn't enter a valid file, display logo!
 				var logo = document.createElement("img");
 				logo.src = "assets/ActionJS_logo.png";
 				logo.style.position = "absolute";

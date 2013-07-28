@@ -15,10 +15,9 @@
 
 (function(window, action){
 
-	// **TO DO: add stop() and play() methods?
-
 	// Animation class - stores a spritesheet internally and shifts it horizontally to animate
 	action.Animation = function(spritesheet, spriteWidth, spriteHeight){
+		// usual variables
 		var _this = this;
 		this.displayed = false;
 		this.x = 0;
@@ -29,8 +28,13 @@
 		this.scaleX = 1;
 		this.scaleY = 1;
 		this.rotation = 0;
+		// frame variables
 		var _numFrames = 0;
+		this.__defineGetter__("numFrames", function(){
+			return _numFrames;
+		});
 		var _currentFrame = 0;
+		// the location of the spritesheet
 		var _src = spritesheet;
 		this.__defineGetter__("src", function(){
 			return _src;
@@ -39,17 +43,48 @@
 			_src = src;
 			_sheet.src = _src;
 		});
+		// the image object containing the spritesheet
 		var _sheet = new Image();
+		// set stuff up when spritesheet is loaded
 		action.util.addEventHandler(_sheet, "load", function(){
 			_numFrames = Math.round(_sheet.width/_this.width);
+			_this.play(true);
 		});
 		if(_src) _sheet.src = _src;
 		
-		action.addEventListener(action.events.ENTER_FRAME, function(){
-			_currentFrame++;
-			_currentFrame %= _numFrames;
-		});
+		// load event handler so you can do stuff when the image is loaded
+		this.load = function(handler){
+			action.util.addEventHandler(_sheet, "load", handler);
+		};
 		
+		// play status variables
+		var _playing = false;
+		this.__defineGetter__("playing", function(){
+			return _playing;
+		});
+		var _loop;
+		// enterframe event handler
+		var _onEnterFrame = function(){
+			_currentFrame++;
+			if(!_loop && _currentFrame >= _numFrames){
+				_this.stop();
+			} else {
+				_currentFrame %= _numFrames;
+			}
+		};
+		// add proper enterframe handler via loop() and unloop() functions
+		this.play = function(loop){
+			_loop = loop || false;
+			action.addEventListener(action.events.ENTER_FRAME, _onEnterFrame);
+			_playing = true;
+		};
+		this.stop = function(){
+			action.removeEventListener(action.events.ENTER_FRAME, _onEnterFrame);
+			_currentFrame = 0;
+			_playing = false;
+		};
+		
+		// the mighty draw function
 		this.draw = function(stage){
 			stage.save();
 			stage.translate(_this.x, _this.y);

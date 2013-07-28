@@ -88,5 +88,6 @@ action.main = function(){
 		action.undisplay(r);
 		action.title("What title?");
 		t.text = "BOOM";
+		s.stop();
 	}, 7000);
 };
