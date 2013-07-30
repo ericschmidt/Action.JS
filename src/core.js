@@ -227,6 +227,12 @@
 				}
 			}
 		};
+		
+		// empties the display list
+		this.emptyDisplay = function(){
+			_display = [];
+		};
+		
 	})();
 	
 })(window);

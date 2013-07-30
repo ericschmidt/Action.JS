@@ -181,6 +181,9 @@
 				}
 			}
 		};
+		this.emptyDisplay = function(){
+			_display = [];
+		};
 	})();
 })(window);
 
@@ -360,10 +363,11 @@
 	action.util.browser.agent = navigator.userAgent;
 })(window, document, action);
 
-(function(window, action){
+(function(window, document, action){
 	action.events = {};
 	action.events.READY = "ready";
 	action.events.LOAD = "load";
+	action.events.RESIZE = "resize";
 	action.events.ENTER_FRAME = "enterframe";
 	action.events.CLICK = "click";
 	action.events.MOUSE_MOVE = "mousemove";
@@ -372,15 +376,28 @@
 	action.events.MOUSE_WHEEL = "mouse_wheel";
 	action.events.KEY_DOWN = "keydown";
 	action.events.KEY_UP = "keyup";
-	action.events.click = function(obj, handler){
-		action.addEventListener(action.events.CLICK, function(){
+	action.events.TOUCH_START = "touch_start";
+	action.events.TOUCH_MOVE = "touch_move";
+	action.events.TOUCH_END = "touch_end";
+	action.events.DEVICE_MOTION = "devicemotion";
+	action.events.DEVICE_ORIENTATION = "deviceorientation";
+	var _events = [];
+	action.events.bind = function(obj, type, handler){
+		var _handler = function(){
 			if(action.calc.ptCollisionRect(action.mouse.x, action.mouse.y, obj)) handler(obj);
-		});
+		};
+		action.addEventListener(type, _handler);
+		_events.push({obj: obj, type: type, handler: handler, realHandler: _handler});
 	};
-	action.events.hover = function(obj, handler){
-		action.addEventListener(action.events.MOUSE_MOVE, function(){
-			if(action.calc.ptCollisionRect(action.mouse.x, action.mouse.y, obj)) handler(obj);
-		});
+	action.events.unbind = function(obj, type, handler){
+		for(var i=0;i<_events.length;i++){
+			var event = _events[i];
+			if(event.obj === obj && event.type === type && event.handler === handler){
+				action.removeEventListener(type, event.realHandler);
+				_events.splice(i, 1);
+				break;
+			}
+		}
 	};
 	action.addEventListener = function(type, handler){
 		action.util.addEventHandler(window, type, handler);
@@ -392,11 +409,22 @@
 		data = data || {};
 		window.dispatchEvent(new CustomEvent(type, {detail: data}));
 	};
-	action.addEventListener(action.util.browser.name === "firefox" ? "DOMMouseScroll" : "mousewheel", function(e){
+	action.util.addEventHandler(window, action.util.browser.name === "firefox" ? "DOMMouseScroll" : "mousewheel", function(e){
 		var _delta = e.detail ? -1*e.detail : e.wheelDelta/120;
 		action.dispatchEvent(action.events.MOUSE_WHEEL, {delta: _delta});
 	});
-})(window, action);
+	if(window.TouchEvent){
+		action.util.addEventHandler(document, "touchstart", function(e){
+			action.dispatchEvent(action.events.TOUCH_START, e);
+		});
+		action.util.addEventHandler(document, "touchmove", function(e){
+			action.dispatchEvent(action.events.TOUCH_MOVE, e);
+		});
+		action.util.addEventHandler(document, "touchend", function(e){
+			action.dispatchEvent(action.events.TOUCH_END, e);
+		});
+	}
+})(window, document, action);
 
 (function(window, action){
 	action.mouse = {};

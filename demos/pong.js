@@ -51,6 +51,8 @@
 		action.addEventListener(action.events.ENTER_FRAME, onEnterFrame);
 		action.addEventListener(action.events.KEY_DOWN, onKeyDown);
 		action.addEventListener(action.events.KEY_UP, onKeyUp);
+		// for mobile
+		action.addEventListener(action.events.DEVICE_MOTION, onDeviceMotion);
 		
 		// set fps and go!
 		action.fps = 60;
@@ -97,6 +99,20 @@
 	function onKeyUp(ke){
 		if(ke.which === action.keyboard.W || ke.which === action.keyboard.UP) _w = false;
 		if(ke.which === action.keyboard.S || ke.which === action.keyboard.DOWN) _s = false;
+	}
+	
+	function onDeviceMotion(e){
+		var accel = e.accelerationIncludingGravity.z - 7;
+		if(Math.abs(accel) < 1.5){
+			_w = false;
+			_s = false;
+		} else if(accel > 0){
+			_w = false;
+			_s = true;
+		} else if(accel < 0){
+			_w = true;
+			_s = false;
+		}
 	}
 	
 	function onEnterFrame(){

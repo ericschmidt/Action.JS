@@ -72,7 +72,7 @@
 				_currentFrame %= _numFrames;
 			}
 		};
-		// add proper enterframe handler via loop() and unloop() functions
+		// playback control functions
 		this.play = function(loop){
 			_loop = loop || false;
 			action.addEventListener(action.events.ENTER_FRAME, _onEnterFrame);

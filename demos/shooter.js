@@ -159,7 +159,7 @@
 		
 		// create log and stage, set title
 		action.createLog();
-		action.createStage(0, 0, 1024, 768);
+		action.createStage(0, 0, 800, 600);
 		action.title("Shooter Demo | Action.JS");
 		
 		// create the background image
@@ -187,6 +187,9 @@
 		action.addEventListener(action.events.KEY_DOWN, onKeyDown);
 		action.addEventListener(action.events.KEY_UP, onKeyUp);
 		action.addEventListener(action.events.ENTER_FRAME, onEnterFrame);
+		// mobile event listeners!
+		action.addEventListener(action.events.DEVICE_MOTION, onDeviceMotion);
+		action.addEventListener(action.events.TOUCH_START, shoot);
 		
 		// set fps and go!
 		action.fps = 40;
@@ -229,6 +232,20 @@
 		if(e.which === action.keyboard.W || e.which === action.keyboard.UP) _up = false;
 		if(e.which === action.keyboard.S || e.which === action.keyboard.DOWN) _down = false;
 		if(e.which === action.keyboard.M || e.which === action.keyboard.SPACEBAR) _shoot = false;
+	}
+	
+	function onDeviceMotion(e){
+		var accel = e.accelerationIncludingGravity.z - 7;
+		if(Math.abs(accel) < 1.5){
+			_up = false;
+			_down = false;
+		} else if(accel > 0){
+			_up = false;
+			_down = true;
+		} else if(accel < 0){
+			_up = true;
+			_down = false;
+		}
 	}
 	
 	function displayHUD(wave, kills, missed, health, lives, score){
@@ -277,6 +294,8 @@
 		action.removeEventListener(action.events.KEY_DOWN, onKeyDown);
 		action.removeEventListener(action.events.KEY_UP, onKeyUp);
 		action.removeEventListener(action.events.ENTER_FRAME, onEnterFrame);
+		action.removeEventListener(action.events.DEVICE_MOTION, onDeviceMotion);
+		action.removeEventListener(action.events.TOUCH_START, shoot);
 	}
 	
 })(action);

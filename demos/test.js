@@ -46,14 +46,16 @@ action.main = function(){
 	
 	action.fps = 24;
 	
-	action.events.click(r, function(){
-		action.log("clicked on r");
-	});
+	// testing event handler binding to display objects
+	var hoverListener = function(obj){
+		action.log("hovering over "+(obj instanceof action.Rectangle ? "a rectangle" : "something else"));
+	};
+	action.events.bind(r, action.events.MOUSE_MOVE, hoverListener);
+	action.events.bind(s, action.events.MOUSE_MOVE, hoverListener);
 	
 	// testing the mousewheel event
 	action.addEventListener(action.events.MOUSE_WHEEL, function(e){
-		if(e.detail.delta > 0) action.log("Mouse scrolled up!");
-		else action.log("Mouse scrolled down!");
+		action.log(e.detail.delta > 0 ? "Mouse scrolled up!" : "Mouse scrolled down!");
 	});
 	
 	action.addEventListener(action.events.ENTER_FRAME, function(){
@@ -85,9 +87,9 @@ action.main = function(){
 	});
 	
 	setTimeout(function(){
-		action.undisplay(r);
 		action.title("What title?");
 		t.text = "BOOM";
 		s.stop();
+		action.events.unbind(r, action.events.MOUSE_MOVE, hoverListener);
 	}, 7000);
 };
