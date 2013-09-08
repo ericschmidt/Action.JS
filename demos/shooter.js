@@ -235,8 +235,8 @@
 	}
 	
 	function onDeviceMotion(e){
-		var accel = e.accelerationIncludingGravity.z - 7;
-		if(Math.abs(accel) < 1.5){
+		var accel = e.accelerationIncludingGravity.z + 7;
+		if(Math.abs(accel) < 2){
 			_up = false;
 			_down = false;
 		} else if(accel > 0){
